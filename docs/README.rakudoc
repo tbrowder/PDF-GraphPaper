@@ -1,0 +1,29 @@
+=begin pod
+
+=head1 NAME
+
+B<PDF::GraphPaper> - Provides a binary to produce PDF graph grids on Letter or A4 paper
+
+=head1 SYNOPSIS
+
+=begin code :lang<raku>
+
+use PDF::GraphPaper;
+
+=end code
+
+=head1 DESCRIPTION
+
+B<PDF::GraphPaper> is ...
+
+=head1 AUTHOR
+
+Tom Browder <tbrowder@acm.org>
+
+=head1 COPYRIGHT AND LICENSE
+
+© 2025 Tom Browder
+
+This library is free software; you may redistribute it or modify it under the Artistic License 2.0.
+
+=end pod

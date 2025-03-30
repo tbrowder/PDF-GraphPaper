@@ -1,0 +1,25 @@
+{
+  "auth": "zef:tbrowder",
+  "authors": [
+    "Tom Browder"
+  ],
+  "build-depends": [
+  ],
+  "depends": [
+  ],
+  "description": "Provides a binary to produce PDF graph grids on Letter or A4 paper",
+  "license": "Artistic-2.0",
+  "name": "PDF::GraphPaper",
+  "perl": "6.d",
+  "provides": {
+    "PDF::GraphPaper": "lib/PDF/GraphPaper.rakumod"
+  },
+  "resources": [
+  ],
+  "source-url": "",
+  "tags": [
+  ],
+  "test-depends": [
+  ],
+  "version": "0.0.1"
+}
