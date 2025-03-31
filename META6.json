@@ -7,7 +7,14 @@
   "build-depends": [
   ],
   "depends": [
-    "MacOS::NativeLib"
+    "MacOS::NativeLib",
+    "PDF::API6",
+    "PDF::Lite",
+    "PDF::Content::Color :ColorName, :color",
+    "PDF::Content::XObject",
+    "PDF::Tags",
+    "PDF::Content::Text::Box",
+    "PDF::Content::Page :PageSizes"
   ],
   "description": "Provides a binary to produce PDF graph grids on ISO paper sizes",
   "license": "Artistic-2.0",
