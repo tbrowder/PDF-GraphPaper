@@ -1,6 +1,7 @@
 use Test;
+
 use PDF::GraphPaper;
 
-pass "replace me";
+isa-ok PDF::GraphPaper, PDF::GraphPaper;
 
 done-testing;
