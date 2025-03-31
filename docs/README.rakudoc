@@ -2,7 +2,7 @@
 
 =head1 NAME
 
-B<PDF::GraphPaper> - Provides a binary to produce PDF graph grids on Letter or A4 paper
+B<PDF::GraphPaper> - Provides a binary to produce PDF graph grids on ISO paper sizes
 
 =head1 SYNOPSIS
 
@@ -18,7 +18,7 @@ B<PDF::GraphPaper> is ...
 
 =head1 AUTHOR
 
-Tom Browder <tbrowder@acm.org>
+Tom Browder \<tbrowder@acm.org\>
 
 =head1 COPYRIGHT AND LICENSE
 

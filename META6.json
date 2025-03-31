@@ -1,5 +1,6 @@
 {
   "auth": "zef:tbrowder",
+  "author": "Tom Browder",
   "authors": [
     "Tom Browder"
   ],
@@ -7,7 +8,7 @@
   ],
   "depends": [
   ],
-  "description": "Provides a binary to produce PDF graph grids on Letter or A4 paper",
+  "description": "Provides a binary to produce PDF graph grids on ISO paper sizes",
   "license": "Artistic-2.0",
   "name": "PDF::GraphPaper",
   "perl": "6.d",
@@ -16,8 +17,9 @@
   },
   "resources": [
   ],
-  "source-url": "",
+  "source-url": "https://github.com/tbrowder/PDF-GraphPaper.git",
   "tags": [
+    "graph grid table xobject pdf underlay"
   ],
   "test-depends": [
   ],

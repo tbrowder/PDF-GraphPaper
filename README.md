@@ -1,7 +1,9 @@
+[![Actions Status](https://github.com/tbrowder/PDF-GraphPaper/actions/workflows/linux.yml/badge.svg)](https://github.com/tbrowder/PDF-GraphPaper/actions) [![Actions Status](https://github.com/tbrowder/PDF-GraphPaper/actions/workflows/macos.yml/badge.svg)](https://github.com/tbrowder/PDF-GraphPaper/actions) [![Actions Status](https://github.com/tbrowder/PDF-GraphPaper/actions/workflows/windows.yml/badge.svg)](https://github.com/tbrowder/PDF-GraphPaper/actions)
+
 NAME
 ====
 
-**PDF::GraphPaper** - Provides a binary to produce PDF graph grids on Letter or A4 paper
+**PDF::GraphPaper** - Provides a binary to produce PDF graph grids on ISO paper sizes
 
 SYNOPSIS
 ========
@@ -18,7 +20,7 @@ DESCRIPTION
 AUTHOR
 ======
 
-Tom Browder <tbrowder@acm.org>
+Tom Browder \<tbrowder@acm.org\>
 
 COPYRIGHT AND LICENSE
 =====================
