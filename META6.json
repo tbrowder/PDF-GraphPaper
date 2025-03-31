@@ -7,7 +7,7 @@
   "build-depends": [
   ],
   "depends": [
-    "MacOS::Lib"
+    "MacOS::NativeLib"
   ],
   "description": "Provides a binary to produce PDF graph grids on ISO paper sizes",
   "license": "Artistic-2.0",
