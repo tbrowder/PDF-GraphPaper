@@ -1,0 +1,10 @@
+#!/usr/bin/env raku
+
+use PDF::GraphPaper;
+
+if not @*ARGS {
+    help;
+}
+else {
+    run @*ARGS;
+}

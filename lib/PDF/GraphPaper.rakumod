@@ -105,8 +105,8 @@ sub rad2deg($radians) {
     $radians * 180 / pi
 }
 
-sub make-graph-paper(
-    $ofil,
+sub create-grid(
+    :$page!,
     PDF::GraphPaper::GPaper :$p!, # 
     :$code = "Letter",
     :$debug,
@@ -175,9 +175,12 @@ sub make-graph-paper(
         HERE
     }
 
+=begin comment
+    # caller should do this:
     my $pdf  = PDF::Lite.new;
     $pdf.media-box = 0, 0, $page-width, $page-height;
     my $page = $pdf.add-page;
+=end comment
 
     # Translate to the lower-left corner of the grid area
     my $llx = 0 + 0.5 * $page-width - 0.5 * $graph-size-width;
@@ -232,6 +235,31 @@ sub make-graph-paper(
         say "DEBUG: Grid LineWidth = {$p.cell-linewidth}" if $debug;
     }
 
+=begin comment
+    # caller should do this:
     $pdf.save-as: $ofil;
     say "See output file: '$ofil'";
-} # sub make-graph-paper($ofil) is export {
+=end comment
+} # sub create-grid
+
+sub run(@args) is export {
+    say "Executing {$*PROGRAM.basename}";
+}
+
+sub help is export {
+    print qq:to/HERE/;
+    Usage: {$*PROGRAM.basename} <mode> [options...]
+
+    Creates a gridded overlay on single page according
+    to the user's specification in a configuration file.
+
+    Modes:
+      in=X - Where X is a specification file name
+      spec - Creates a specification file on STDOUT
+      
+    Options:
+      out=Y - Where Y is the name of the output PDF file
+              (overrides the name in the input file)
+    HERE
+}
+
