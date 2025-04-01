@@ -23,9 +23,7 @@
   "provides": {
     "PDF::GraphPaper": "lib/PDF/GraphPaper.rakumod",
     "PDF::GraphPaper::Subs": "lib/PDF/GraphPaper/Subs.rakumod",
-    "PDF::GraphPaper::Vars": "lib/PDF/GraphPaper/Vars.rakumod",
-    "PDF::Subs": "lib/PDF/Subs.rakumod",
-    "PDF::Vars": "lib/PDF/Vars.rakumod"
+    "PDF::GraphPaper::Vars": "lib/PDF/GraphPaper/Vars.rakumod"
   },
   "resources": [
   ],

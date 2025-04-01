@@ -9,6 +9,9 @@ use PDF::Tags;
 use PDF::Content::Text::Box;
 use PDF::Content::Page :PageSizes;
 
+use PDF::GraphPaper::Subs;
+use PDF::GraphPaper::Vars;
+
 class GPaper {
     has $.units is rw = "in";       # default
     has $.media is rw = "letter";   # default
@@ -243,7 +246,58 @@ sub create-grid(
 } # sub create-grid
 
 sub run(@args) is export {
-    say "Executing {$*PROGRAM.basename}";
+    say "Executing {$*PROGRAM.basename}...";
+    # input vars for run
+    my $debug = 0;
+    my $ofil;
+    my $ifil;
+    my $spec = 0;
+
+    my $exe = 0;
+    for @args {
+        when /^:i sp / {
+            # create the default spec file
+            ++$spec;
+        }
+        when /^:i in '=' (\S+)  / {
+            # read the input spec file
+            $ifil = ~$0;
+            unless $ifil.IO.r {
+                say "FATAL: Unable to read config file '$ifil'";
+                say "Exiting...";
+                exit;
+            }
+            $exe = 1;
+        }
+        when /^:i out '=' (\S+)  / {
+            # the output gridded file
+            $ofil = ~$0;
+            unless $ofil.IO.w {
+                say "FATAL: Unable to write config file '$ofil'";
+                say "Exiting...";
+                exit;
+            }
+            $exe = 1;
+        }
+        when /^:i d / {
+            ++$debug;
+        }
+        default {
+            say "FATAL: Unknown arg '$_'";
+            say "Exiting...";
+            exit;
+        }
+    }
+
+    # handle the args
+    if $spec {
+        create-spec-file $ofil, :$debug;
+    }
+    elsif $exe {
+        # creates a pdf file and calls sub create-grid with it
+        create-gridded-file $ofil, :$debug;
+    }
+
 }
 
 sub help is export {

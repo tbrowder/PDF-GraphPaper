@@ -22,7 +22,7 @@ The default user measurements are inches for page descriptions (such as margins 
 AUTHOR
 ======
 
-Tom Browder \<tbrowder@acm.org\>
+Tom Browder (tbrowder@acm.org)
 
 COPYRIGHT AND LICENSE
 =====================
