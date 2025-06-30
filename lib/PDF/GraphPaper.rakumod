@@ -73,7 +73,7 @@ sub rad2deg($radians) {
 
 sub create-grid(
     :$page!,
-    PDF::GraphPaper::GPaper :$p!, #
+    :$gp!, #
     :$code = "Letter",
     :$debug,
     ) is export {
@@ -83,50 +83,50 @@ sub create-grid(
     # (or cells if no grids are desired) for the desired paper,
     # orientation, cell-size, and  margins.
     #===============================================================
-    # defaults (with limited user inputs via the $p object for now):
+    # defaults (with limited user inputs via the $np object for now):
     my $page-width  = 8.5 * 72; # <= should be done in TWEAK
     my $page-height = 11  * 72; # <= should be done in TWEAK
     # individual margin settings should be done in TWEAK
 
-    my $max-graph-width  = $page-width  - $p.margins * 2;
-    my $max-graph-height = $page-height - $p.margins * 2;
+    my $max-graph-width  = $page-width  - $gp.margins * 2;
+    my $max-graph-height = $page-height - $gp.margins * 2;
     say "DEBUG: max-graph-width = $max-graph-width" if $debug;
-    say "DEBUG: \$p.cell-size-x: {$p.cell-size-x}";
-    say "DEBUG: \$p.cell-size-y: {$p.cell-size-y}";
+    say "DEBUG: \$gp.cell-size-x: {$gp.cell-size-x}";
+    say "DEBUG: \$gp.cell-size-y: {$gp.cell-size-y}";
 
-    my $max-ncells-x = floor($max-graph-width  / $p.cell-size-x);
-    my $max-ncells-y = floor($max-graph-height / $p.cell-size-y);
+    my $max-ncells-x = floor($max-graph-width  / $gp.cell-size-x);
+    my $max-ncells-y = floor($max-graph-height / $gp.cell-size-y);
 
-#   $p.major-grids = True;
-    my $ngrids-x = $p.major-grids
-                   ?? floor($p.$max-ncells-x div $p.cells-per-grid)
+#   $gp.major-grids = True;
+    my $ngrids-x = $gp.major-grids
+                   ?? floor($gp.$max-ncells-x div $gp.cells-per-grid)
                    !! 0;
-    my $ngrids-y = $p.major-grids
-                   ?? floor($p.$max-ncells-y div $p.cells-per-grid)
+    my $ngrids-y = $gp.major-grids
+                   ?? floor($gp.$max-ncells-y div $gp.cells-per-grid)
                    !! 0;
 
     my $ncells-x = $ngrids-x
-                   ?? ($ngrids-x * $p.cells-per-grid)
+                   ?? ($ngrids-x * $gp.cells-per-grid)
                    !! $max-ncells-x;
 
     my $ncells-y = $ngrids-y
-                   ?? ($ngrids-y * $p.cells-per-grid)
+                   ?? ($ngrids-y * $gp.cells-per-grid)
                    !! $max-ncells-y;
 
-    my $graph-size-width = $p.major-grids
-                     ?? ($ngrids-x * $p.cells-per-grid * $p.cell-size-x)
-                     !! ($ncells-x * $p.cell-size-x);
+    my $graph-size-width = $gp.major-grids
+                     ?? ($ngrids-x * $gp.cells-per-grid * $gp.cell-size-x)
+                     !! ($ncells-x * $gp.cell-size-x);
 
-    my $graph-size-height = $p.major-grids
-                     ?? ($ngrids-y * $p.cells-per-grid * $p.cell-size-y)
-                     !! ($ncells-y * $p.cell-size-y);
+    my $graph-size-height = $gp.major-grids
+                     ?? ($ngrids-y * $gp.cells-per-grid * $gp.cell-size-y)
+                     !! ($ncells-y * $gp.cell-size-y);
 
     if $debug {
-        my $csx = $p.cell-size-x/72.0;
-        my $csy = $p.cell-size-y/72.0;
-        my $m  = $p.margins/72.0;
-        my $cpgx = $p.cells-per-grid-x;
-        my $cpgy = $p.cells-per-grid-y;
+        my $csx  = $gp.cell-size-x/72.0;
+        my $csy  = $gp.cell-size-y/72.0;
+        my $m    = $gp.margins/72.0;
+        my $cpgx = $gp.cells-per-grid-x;
+        my $cpgy = $gp.cells-per-grid-y;
         say qq:to/HERE/;
         Current graph paper metrics:
           cell size (in)     : $csx  x $csy
@@ -157,48 +157,48 @@ sub create-grid(
         # draw horizontal lines, $y is varying 0 to $twidth
         #   bottom to top
         for 0..$ncells-y -> $i {
-            my $y = $i * $p.cell-size-y;
-            if not $p.major-grids {
-                .LineWidth = $p.cell-linewidth;
+            my $y = $i * $gp.cell-size-y;
+            if not $gp.major-grids {
+                .LineWidth = $gp.cell-linewidth;
             }
             elsif not $i mod 10 {
-                .LineWidth = $p.grid-linewidth;
+                .LineWidth = $gp.grid-linewidth;
             }
             elsif not $i mod 5 {
-                .LineWidth = $p.mid-grid-linewidth;
+                .LineWidth = $gp.mid-grid-linewidth;
             }
             else {
-                .LineWidth = $p.cell-linewidth;
+                .LineWidth = $gp.cell-linewidth;
             }
             # HORIZONTAL line
             .MoveTo: 0,                 $y;
             .LineTo: $graph-size-width, $y;
             .Stroke;
         }
-        say "DEBUG: Grid LineWidth = {$p.cell-linewidth}" if $debug;
+        say "DEBUG: Grid LineWidth = {$gp.cell-linewidth}" if $debug;
 
         # draw vertical lines, $x is varying 0 to $twidth
         #   left to right
         for 0..$ncells-x -> $i {
-            my $x = $i * $p.cell-size-x;
-            if not $p.major-grids {
-                .LineWidth = $p.cell-linewidth;
+            my $x = $i * $gp.cell-size-x;
+            if not $gp.major-grids {
+                .LineWidth = $gp.cell-linewidth;
             }
             elsif not $i mod 10 {
-                .LineWidth = $p.grid-linewidth;
+                .LineWidth = $gp.grid-linewidth;
             }
             elsif not $i mod 5 {
-                .LineWidth = $p.mid-grid-linewidth;
+                .LineWidth = $gp.mid-grid-linewidth;
             }
             else {
-                .LineWidth = $p.cell-linewidth;
+                .LineWidth = $gp.cell-linewidth;
             }
             # VERTICAL line
             .MoveTo: $x, 0;
             .LineTo: $x, $graph-size-height;
             .Stroke;
         }
-        say "DEBUG: Grid LineWidth = {$p.cell-linewidth}" if $debug;
+        say "DEBUG: Grid LineWidth = {$gp.cell-linewidth}" if $debug;
     }
 
 =begin comment
