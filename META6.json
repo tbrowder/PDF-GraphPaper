@@ -22,6 +22,7 @@
   "perl": "6.d",
   "provides": {
     "PDF::GraphPaper": "lib/PDF/GraphPaper.rakumod",
+    "PDF::GraphPaper::GPaper": "lib/PDF/GraphPaper/GPaper.rakumod",
     "PDF::GraphPaper::Subs": "lib/PDF/GraphPaper/Subs.rakumod",
     "PDF::GraphPaper::Vars": "lib/PDF/GraphPaper/Vars.rakumod"
   },

@@ -9,42 +9,9 @@ use PDF::Tags;
 use PDF::Content::Text::Box;
 use PDF::Content::Page :PageSizes;
 
-use PDF::GraphPaper::Subs;
 use PDF::GraphPaper::Vars;
-
-class GPaper {
-    has $.units is rw = "in";       # default
-    has $.media is rw = "letter";   # default
-    has $.orientation = "portrait"; # default
-    #=========================
-    #== defaults for Letter paper
-    has $.margins is rw       = 0.5 * 72;
-    # allow for custom margins for each edge
-    has $.margin-t is rw = -1; # -1 indicates not set
-    has $.margin-b is rw = -1; # -1 indicates not set
-    has $.margin-l is rw = -1; # -1 indicates not set
-    has $.margin-r is rw = -1; # -1 indicates not set
-
-    has $.cell-size-x is rw   = 0.1 * 72; # * 72; desired minimum cell size (inches)
-    has $.cell-size-y is rw   = 0.1 * 72; # * 72; desired minimum cell size (inches)
-    has $.page-width is rw    = 8.5 * 72;
-    has $.page-height is rw   = 11  * 72;
-
-    has $.major-grids is rw    = True;
-    has $.minor-grids is rw    = True; # forced False if cells-per-grid is odd
-    has $.cells-per-grid is rw = 10;   # heavier line every X cells
-
-    # standard linewidths in PS points
-    # TODO allow customization
-    # mid-grid line only for even number of cells-per-grid
-    has $.cell-linewidth is rw     =  0;    # very fine line
-    has $.mid-grid-linewidth is rw =  0.75; # heavier line width (for even cpg)
-    has $.grid-linewidth is rw     =  1.40; # heavier line width
-
-    submethod TWEAK {
-
-    }
-}
+use PDF::GraphPaper::Vars;
+use PDF::GraphPaper::GPaper;
 
 sub show-paper-sizes(
     :$debug,
@@ -106,13 +73,13 @@ sub rad2deg($radians) {
 
 sub create-grid(
     :$page!,
-    PDF::GraphPaper::GPaper :$p!, # 
+    PDF::GraphPaper::GPaper :$p!, #
     :$code = "Letter",
     :$debug,
     ) is export {
 
     #===============================================================
-    # Determine maximum horizontal and vertical grid squares 
+    # Determine maximum horizontal and vertical grid squares
     # (or cells if no grids are desired) for the desired paper,
     # orientation, cell-size, and  margins.
     #===============================================================
@@ -131,19 +98,19 @@ sub create-grid(
     my $max-ncells-y = floor($max-graph-height / $p.cell-size-y);
 
 #   $p.major-grids = True;
-    my $ngrids-x = $p.major-grids 
-                   ?? floor($p.$max-ncells-x div $p.cells-per-grid) 
+    my $ngrids-x = $p.major-grids
+                   ?? floor($p.$max-ncells-x div $p.cells-per-grid)
                    !! 0;
-    my $ngrids-y = $p.major-grids 
-                   ?? floor($p.$max-ncells-y div $p.cells-per-grid) 
+    my $ngrids-y = $p.major-grids
+                   ?? floor($p.$max-ncells-y div $p.cells-per-grid)
                    !! 0;
 
-    my $ncells-x = $ngrids-x 
-                   ?? ($ngrids-x * $p.cells-per-grid) 
+    my $ncells-x = $ngrids-x
+                   ?? ($ngrids-x * $p.cells-per-grid)
                    !! $max-ncells-x;
 
-    my $ncells-y = $ngrids-y 
-                   ?? ($ngrids-y * $p.cells-per-grid) 
+    my $ncells-y = $ngrids-y
+                   ?? ($ngrids-y * $p.cells-per-grid)
                    !! $max-ncells-y;
 
     my $graph-size-width = $p.major-grids
@@ -287,11 +254,13 @@ sub run(@args) is export {
 
     # handle the args
     if $spec {
-        create-spec-file $ofil, :$debug;
+        say "Not yet implepented...exiting"; exit;
+#       create-spec-file $ofil, :$debug;
     }
     elsif $exe {
+        say "Not yet implepented...exiting"; exit;
         # creates a pdf file and calls sub create-grid with it
-        create-gridded-file $ofil, :$debug;
+#       create-gridded-file $ofil, :$debug;
     }
 
 }
@@ -306,10 +275,9 @@ sub help is export {
     Modes:
       in=X - Where X is a specification file name
       spec - Creates a specification file on STDOUT
-      
+
     Options:
       out=Y - Where Y is the name of the output PDF file
               (overrides the name in the input file)
     HERE
 }
-
