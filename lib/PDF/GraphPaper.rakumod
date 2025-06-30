@@ -72,7 +72,6 @@ sub get-paper-dimens(
 ) is export {
     my %h;
     $code .= tc;
-
     for PageSizes.kv -> $k, $v {
         say "$k, $v" if $debug;
         %h{$k} = [$v];
@@ -81,7 +80,6 @@ sub get-paper-dimens(
         my $v = %h{$k};
         say "  $k: $v" if $debug;
     }
-
     my $size;
     if %h{$code}:exists {
         $size = %h{$code};
@@ -92,11 +90,9 @@ sub get-paper-dimens(
         $size = "Unrecognized paper code '$code'";
         say "unrecognized paper code '$code'" if $debug;
     }
-
     for PageSizes.kv -> $k, $v {
         say "$k, $v" if $debug;
     }
-
     $size;
 } # get-paper-dimens
 
