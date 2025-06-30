@@ -1,13 +1,14 @@
 use Test;
 
-use PDF::GraphPaper;
-use PDF::GraphPaper::Subs;
-use PDF::GraphPaper::Vars;
-use PDF::GraphPaper::GPaper;
+my @modules = <
+    PDF::GraphPaper;
+    PDF::GraphPaper::Subs;
+    PDF::GraphPaper::Vars;
+    PDF::GraphPaper::GPaper;
+>;
 
-isa-ok PDF::GraphPaper, PDF::GraphPaper;
-isa-ok PDF::GraphPaper::GPaper, PDF::GraphPaper::GPaper;
-isa-ok PDF::GraphPaper::Subs, PDF::GraphPaper::Subs;
-isa-ok PDF::GraphPaper::Vars, PDF::GraphPaper::Vars;
+plan @modules.elems;
 
-done-testing;
+for @modules -> $m {
+    use-ok $m, "Module '$m' used okay";
+}
