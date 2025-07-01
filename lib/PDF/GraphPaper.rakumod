@@ -247,11 +247,11 @@ sub run(@args) is export {
     vscale # put vert scale, default 0.5, 0 origin, inches
     =end comment
 
-    my $debug = 0;
+    my $debug     = 0;
     my $show-spec = 0;
     my $spec;
-    my $vscale = 0;
-    my $force = 0;
+    my $vscale    = 0;
+    my $force     = 0;
     my $ofil;
 
     my $exe = 0;
@@ -294,9 +294,8 @@ sub run(@args) is export {
 #       create-spec-file $ofil, :$debug;
     }
     elsif $exe {
-        say "Create output file: Not yet implepented...";
+        say "Creating output file '$ofil'...";
         # creates a pdf file and calls sub create-grid with it
-#       create-gridded-file $ofil, :$debug;
     }
     elsif $force {
         say "Added the 'force' option for overwriting files";
@@ -304,6 +303,10 @@ sub run(@args) is export {
     else {
         say "FATAL: Unexpected arg '$_'";
         exit;
+    }
+
+    if $exe {
+        create-gridded-file $ofil, :$debug;
     }
 }
 
