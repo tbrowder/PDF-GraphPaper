@@ -15,6 +15,7 @@ use PDF::GraphPaper::Classes;
 
 my $gp = GPaper.new: :margins(0);
 isa-ok $gp, GPaper;
+is $gp.margins, 0;
 
 my $pdf  = PDF::Lite.new;
 isa-ok $pdf, PDF::Lite;
@@ -22,8 +23,10 @@ isa-ok $pdf, PDF::Lite;
 my $page = $pdf.add-page;
 isa-ok $page, PDF::Content::Page;
 
-#lives-ok {
-#}, "test sub create-grid";
+#=begin comment
+lives-ok {
+    create-grid :$page, :$gp, :debug;
+}, "test sub create-grid";
+#=end comment
 
 done-testing;
-

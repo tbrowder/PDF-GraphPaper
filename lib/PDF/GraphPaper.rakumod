@@ -11,7 +11,7 @@ use PDF::Content::Page :PageSizes;
 
 use PDF::GraphPaper::Vars;
 use PDF::GraphPaper::Subs;
-use PDF::GraphPaper::GPaper;
+use PDF::GraphPaper::Classes;
 
 sub show-paper-sizes(
     :$debug,
@@ -30,13 +30,36 @@ sub show-paper-sizes(
 }
 
 sub get-paper-dimens(
-    $code is copy where ( $code ~~ /:i letter | tabloid | ledger | legal | statement
-                              | executive | folio | quarto
-                              | a0 | a1 | a2 | a3 | a4 | a5
-                              | b4 | b5 / ),
+    $code is copy where $code ~~ /:i 
+        letter | legal | a0 | a1 | a2 | a3 | a4 | a5 | b4 | b5 |
+        executive | ledger | folio | quarto | statement | tabloid 
+        /;
     :$debug,
-    --> List # llx, lly, urx, ury (PS points)
-) is export {
+    --> List
+    ) is export {
+
+    #--> List # llx, lly, urx, ury (PS points)
+    with $code {
+        when /letter/ { 0, 0, 0, 0 };
+        when /legal/ { 0, 0, 0, 0 }; 
+        when /a0/  { 0, 0, 0, 0 }; 
+        when /a1/ { 0, 0, 0, 0 }; 
+        when /a2/ { 0, 0, 0, 0 }; 
+        when /a3/   { 0, 0, 0, 0 }; 
+        when /a4/   { 0, 0, 0, 0 }; 
+        when /a5/   { 0, 0, 0, 0 }; 
+        when /b4/   { 0, 0, 0, 0 }; 
+        when /b5/  { 0, 0, 0, 0 }; 
+        when /executive/   { 0, 0, 0, 0 }; 
+        when /ledger/   { 0, 0, 0, 0 }; 
+        when /folio/   { 0, 0, 0, 0 }; 
+        when /quarto/   { 0, 0, 0, 0 }; 
+        when /statement/   { 0, 0, 0, 0 }; 
+        when /tabloid/ { 0, 0, 0, 0 }; 
+
+        default { 0, 0, 0, 0 }; 
+    }
+
     my %h;
     $code .= tc;
     for PageSizes.kv -> $k, $v {
@@ -63,11 +86,11 @@ sub get-paper-dimens(
     $size;
 } # get-paper-dimens
 
-sub deg2rad($degrees) {
+sub deg2rad($degrees) is export {
     $degrees * pi / 180
 }
 
-sub rad2deg($radians) {
+sub rad2deg($radians) is export {
     $radians * 180 / pi
 }
 
@@ -84,8 +107,8 @@ sub create-grid(
     # orientation, cell-size, and  margins.
     #===============================================================
     # defaults (with limited user inputs via the $np object for now):
-    my $page-width  = 8.5 * 72; # <= should be done in TWEAK
-    my $page-height = 11  * 72; # <= should be done in TWEAK
+    my $page-width  =  8.5 * 72; # <= should be done in TWEAK
+    my $page-height = 11.0 * 72; # <= should be done in TWEAK
     # individual margin settings should be done in TWEAK
 
     my $max-graph-width  = $page-width  - $gp.margins * 2;
