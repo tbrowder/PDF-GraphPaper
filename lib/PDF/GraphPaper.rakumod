@@ -239,7 +239,7 @@ sub run(@args) is export {
     =begin comment
     # input vars for run
     # from help:
-    <file> # output
+    <file.pdf>  # output pdf file
     show-spec   # show spec file format
     # options
     force
@@ -248,17 +248,18 @@ sub run(@args) is export {
     =end comment
 
     my $debug = 0;
-    my $ofil;
     my $show-spec = 0;
     my $spec;
     my $vscale = 0;
+    my $force = 0;
+    my $ofil;
 
     my $exe = 0;
 
     for @args {
-        when $_.IO {
+        when /:i '.pdf' $/ {
             $ofil = $_.IO;
-            ++$exit;
+            ++$exe;
         }
         when /^:i sh / {
             # create the default spec file, show on STDOUT
@@ -277,6 +278,9 @@ sub run(@args) is export {
         when /^:i d / {
             ++$debug;
         }
+        when /^:i f / {
+            ++$force;
+        }
         default {
             say "FATAL: Unknown arg '$_'";
             say "Exiting...";
@@ -290,9 +294,16 @@ sub run(@args) is export {
 #       create-spec-file $ofil, :$debug;
     }
     elsif $exe {
-        say "Not yet implepented...exiting"; exit;
+        say "Create output file: Not yet implepented...";
         # creates a pdf file and calls sub create-grid with it
 #       create-gridded-file $ofil, :$debug;
+    }
+    elsif $force {
+        say "Added the 'force' option for overwriting files";
+    }
+    else {
+        say "FATAL: Unexpected arg '$_'";
+        exit;
     }
 }
 
@@ -307,13 +318,13 @@ sub help is export {
     a specification file placed at '\$HOME/pdf-graphpaper.cnf'.
 
     Modes:
-      <file> - The output file for the graph
-      spec   - Creates a specification file on STDOUT
+      <file.pdf> - The output file for the graph (must end in '.pdf')
+      show-spec  - Shows a default specification file on STDOUT
 
     Options:
-      force  - Allows overwriting an existing file
-      in=X   - Where X is a specification file name
-      vscale - Creates a vertical scale at the left
-               of a page with X=0.5in and Y=0in
+      force      - Allows overwriting an existing file
+      spec=X     - Where X is a specification file name
+      vscale     - Creates a vertical scale at the left
+                     of a page with X=0.5in and Y=0in
     HERE
 }
