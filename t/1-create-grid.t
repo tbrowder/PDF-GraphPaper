@@ -11,10 +11,10 @@ use PDF::Content::Page :PageSizes;
 use PDF::GraphPaper;
 use PDF::GraphPaper::Subs;
 use PDF::GraphPaper::Vars;
-use PDF::GraphPaper::GPaper;
+use PDF::GraphPaper::Classes;
 
-my $gp = GraphPaper::GPaper.new: :margins(0);
-isa-ok $gp, GraphPaper::GPaper;
+my $gp = GPaper.new: :margins(0);
+isa-ok $gp, GPaper;
 
 my $pdf  = PDF::Lite.new;
 isa-ok $pdf, PDF::Lite;
