@@ -13,6 +13,7 @@ use PDF::GraphPaper::Vars;
 use PDF::GraphPaper::Subs;
 use PDF::GraphPaper::Classes;
 
+my $pdf-cnf = "{%*ENV<HOME>}/pdf-graphpaper.cnf".IO // "";
 sub show-paper-sizes(
     :$debug,
     --> List
@@ -235,33 +236,35 @@ sub create-grid(
 
 sub run(@args) is export {
     say "Executing {$*PROGRAM.basename}...";
+    =begin comment
     # input vars for run
+    # from help:
+    <file> # output
+    show-spec   # show spec file format
+    # options
+    force
+    spec=X  X is user spec file
+    vscale # put vert scale, default 0.5, 0 origin, inches
+    =end comment
+
     my $debug = 0;
     my $ofil;
-    my $ifil;
-    my $spec = 0;
+    my $show-spec = 0;
+    my $spec;
+    my $vscale = 0;
 
     my $exe = 0;
+
     for @args {
-        when /^:i sp / {
-            # create the default spec file
-            ++$spec;
+        when /^:i sh / {
+            # create the default spec file, show on STDOUT
+            ++$show-spec;
         }
-        when /^:i in '=' (\S+)  / {
+        when /^:i spec '=' (\S+)  / {
             # read the input spec file
-            $ifil = ~$0;
-            unless $ifil.IO.r {
-                say "FATAL: Unable to read config file '$ifil'";
-                say "Exiting...";
-                exit;
-            }
-            $exe = 1;
-        }
-        when /^:i out '=' (\S+)  / {
-            # the output gridded file
-            $ofil = ~$0;
-            unless $ofil.IO.w {
-                say "FATAL: Unable to write config file '$ofil'";
+            $spec = ~$0;
+            unless $spec.IO.r {
+                say "FATAL: Unable to read config file '$spec'";
                 say "Exiting...";
                 exit;
             }
@@ -278,8 +281,8 @@ sub run(@args) is export {
     }
 
     # handle the args
-    if $spec {
-        say "Not yet implepented...exiting"; exit;
+    if $show-spec {
+        say "show-spec: not yet implepented...";
 #       create-spec-file $ofil, :$debug;
     }
     elsif $exe {
@@ -294,15 +297,20 @@ sub help is export {
     print qq:to/HERE/;
     Usage: {$*PROGRAM.basename} <mode> [options...]
 
-    Creates a gridded overlay on single page according
-    to the user's specification in a configuration file.
+    Creates a gridded graph on single page using
+    default settings.
+
+    The user can define his or her own defaults in
+    a specification file placed at '\$HOME/pdf-graphpaper.cnf'.
 
     Modes:
-      in=X - Where X is a specification file name
-      spec - Creates a specification file on STDOUT
+      <file> - The output file for the graph
+      spec   - Creates a specification file on STDOUT
 
     Options:
-      out=Y - Where Y is the name of the output PDF file
-              (overrides the name in the input file)
+      force  - Allows overwriting an existing file
+      in=X   - Where X is a specification file name
+      vscale - Creates a vertical scale at the left
+               of a page with X=0.5in and Y=0in
     HERE
 }
