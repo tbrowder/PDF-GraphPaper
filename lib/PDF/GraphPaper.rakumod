@@ -114,52 +114,50 @@ sub create-grid(
     my $max-graph-width  = $page-width  - $gp.margins * 2;
     my $max-graph-height = $page-height - $gp.margins * 2;
     say "DEBUG: max-graph-width = $max-graph-width" if $debug;
-    say "DEBUG: \$gp.cell-size-x: {$gp.cell-size-x}";
-    say "DEBUG: \$gp.cell-size-y: {$gp.cell-size-y}";
+    say "DEBUG: \$gp.cell-size-x: {$gp.cell-size-x}" if $debug;
+    say "DEBUG: \$gp.cell-size-y: {$gp.cell-size-y}" if $debug;
 
     my $max-ncells-x = floor($max-graph-width  / $gp.cell-size-x);
     my $max-ncells-y = floor($max-graph-height / $gp.cell-size-y);
 
-#   $gp.major-grids = True;
+    say "DEBUG: \$max-ncells-x: {$max-ncells-x}" if $debug;
+
     my $ngrids-x = $gp.major-grids
-                   ?? floor($gp.$max-ncells-x div $gp.cells-per-grid)
+                   ?? floor($max-ncells-x div $gp.cells-per-grid)
                    !! 0;
     my $ngrids-y = $gp.major-grids
-                   ?? floor($gp.$max-ncells-y div $gp.cells-per-grid)
+                   ?? floor($max-ncells-y div $gp.cells-per-grid)
                    !! 0;
-
     my $ncells-x = $ngrids-x
                    ?? ($ngrids-x * $gp.cells-per-grid)
                    !! $max-ncells-x;
-
     my $ncells-y = $ngrids-y
                    ?? ($ngrids-y * $gp.cells-per-grid)
                    !! $max-ncells-y;
-
     my $graph-size-width = $gp.major-grids
-                     ?? ($ngrids-x * $gp.cells-per-grid * $gp.cell-size-x)
-                     !! ($ncells-x * $gp.cell-size-x);
-
+               ?? ($ngrids-x * $gp.cells-per-grid * $gp.cell-size-x)
+               !! ($ncells-x * $gp.cell-size-x);
     my $graph-size-height = $gp.major-grids
-                     ?? ($ngrids-y * $gp.cells-per-grid * $gp.cell-size-y)
-                     !! ($ncells-y * $gp.cell-size-y);
+               ?? ($ngrids-y * $gp.cells-per-grid * $gp.cell-size-y)
+               !! ($ncells-y * $gp.cell-size-y);
 
     if $debug {
         my $csx  = $gp.cell-size-x/72.0;
         my $csy  = $gp.cell-size-y/72.0;
         my $m    = $gp.margins/72.0;
-        my $cpgx = $gp.cells-per-grid-x;
-        my $cpgy = $gp.cells-per-grid-y;
+        my $ngx  = $ngrids-x;
+        my $ngy  = $ngrids-y;
+        my $ncx  = $ncells-x;
+        my $ncy  = $ncells-y;
+        my $cpgx = 
         say qq:to/HERE/;
         Current graph paper metrics:
           cell size (in)     : $csx  x $csy
           margins (in)       :   $m
-          cells per grid in x:  $cpgx
-          cells per grid in y:  $cpgy
-          cells in x         :
-            grids in x       :
-          cells in y         :
-            grids in y       :
+          cells in x         :   $ncx
+            grids in x       :     $ngx
+          cells in y         :   $ncy
+            grids in y       :     $ngy
 
         HERE
     }
@@ -171,9 +169,12 @@ sub create-grid(
     my $page = $pdf.add-page;
 =end comment
 
+#=begin comment
+
     # Translate to the lower-left corner of the grid area
     my $llx = 0 + 0.5 * $page-width - 0.5 * $graph-size-width;
     my $lly = $page-height - 72 - $graph-size-height;
+
     $page.graphics: {
         .transform: :translate($llx, $lly);
 
@@ -223,6 +224,7 @@ sub create-grid(
         }
         say "DEBUG: Grid LineWidth = {$gp.cell-linewidth}" if $debug;
     }
+#=end comment
 
 =begin comment
     # caller should do this:

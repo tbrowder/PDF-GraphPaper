@@ -1,4 +1,6 @@
-unit module GraphPaper::Classes;
+unit module PDF::GraphPaper::Classes;
+
+use PDF::GraphPaper::Subs;
 
 class GPaper is export {
 
@@ -35,7 +37,9 @@ has $.mid-grid-linewidth is rw = 0.75; # heavier line width
 has $.grid-linewidth is rw     = 1.40; # heavier line width
 
 submethod TWEAK {
-
+    if is-odd($!cells-per-grid) {
+        $!minor-grids = False; # forced False 
+    }
 }
 
 } # end of exported class GPaper
