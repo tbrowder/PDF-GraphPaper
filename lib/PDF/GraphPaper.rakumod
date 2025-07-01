@@ -96,11 +96,20 @@ sub rad2deg($radians) is export {
 }
 
 sub create-grid(
+    # caller provides the $page
     :$page!,
     :$gp!, #
     :$code = "Letter",
+    :$force,
     :$debug,
     ) is export {
+
+    unless $page ~~ PDF::Content::Page {
+        die "FATAL: The input is NOT a PDF::Content::Page";
+    }
+    unless $gp ~~ PDF::GraphPaper::Classes::GPaper {
+        die "FATAL: The input is NOT a PDF::GraphPaper::Classes::GPaper";
+    }
 
     #===============================================================
     # Determine maximum horizontal and vertical grid squares
@@ -163,12 +172,12 @@ sub create-grid(
         HERE
     }
 
-=begin comment
+#=begin comment
     # caller should do this:
     my $pdf  = PDF::Lite.new;
     $pdf.media-box = 0, 0, $page-width, $page-height;
     my $page = $pdf.add-page;
-=end comment
+#=end comment
 
 #=begin comment
 
@@ -306,7 +315,23 @@ sub run(@args) is export {
     }
 
     if $exe {
-        create-gridded-file $ofil, :$debug;
+        # open the output file
+        my $pdf = PDF::Lite.new;
+        my $page = $pdf.add-page;
+        my $gp = PDF::GraphPaper::Classes::GPaper.new;
+        # make any changes to $gp
+        create-grid :$page, :$gp, :$debug;
+        if $ofil.IO.r {
+            unless $force {
+                say "Output file '$ofil' exists...exiting";
+                exit;
+            }
+            say "Overwriting existing file '$ofil'...";
+        }
+        else {
+            $pdf.save-as: $ofil;
+        }
+        say "See output file: '$ofil'";
     }
 }
 
