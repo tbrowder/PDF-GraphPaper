@@ -4,7 +4,7 @@ my @modules = <
     PDF::GraphPaper;
     PDF::GraphPaper::Subs;
     PDF::GraphPaper::Vars;
-    PDF::GraphPaper::GPaper;
+    PDF::GraphPaper::Classes;
 >;
 
 plan @modules.elems;

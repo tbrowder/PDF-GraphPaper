@@ -1,4 +1,7 @@
-unit class PDF::GraphPaper::GPaper;
+unit module GraphPaper::Classes;
+
+
+class GPaper is export {
 
 has $.units is rw = "in";       # default
 has $.media is rw = "letter";   # default
@@ -31,3 +34,5 @@ has $.grid-linewidth is rw     =  1.40; # heavier line width
 submethod TWEAK {
 
 }
+
+} # end of exported class GPaper

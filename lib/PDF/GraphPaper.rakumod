@@ -10,7 +10,7 @@ use PDF::Content::Text::Box;
 use PDF::Content::Page :PageSizes;
 
 use PDF::GraphPaper::Vars;
-use PDF::GraphPaper::Vars;
+use PDF::GraphPaper::Subs;
 use PDF::GraphPaper::GPaper;
 
 sub show-paper-sizes(
