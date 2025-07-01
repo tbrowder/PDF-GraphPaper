@@ -256,6 +256,10 @@ sub run(@args) is export {
     my $exe = 0;
 
     for @args {
+        when $_.IO {
+            $ofil = $_.IO;
+            ++$exit;
+        }
         when /^:i sh / {
             # create the default spec file, show on STDOUT
             ++$show-spec;
@@ -290,7 +294,6 @@ sub run(@args) is export {
         # creates a pdf file and calls sub create-grid with it
 #       create-gridded-file $ofil, :$debug;
     }
-
 }
 
 sub help is export {
