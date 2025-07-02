@@ -51,7 +51,9 @@ The installed executable file, `make-graph-paper`, has the following required an
 The specification file
 ----------------------
 
-This program, at execution time, will check for the existence of a specification file in the user's home directory. If none is found, the built-in defaults will be used. Those defaults can be seen by using the `show-specs` option. You can also see them at this link: [SPECS](SPECS.md). 
+This program, at execution time, will check for the existence of a specification file in the user's home directory at '\$HOME/pdf-graphpaper.cnf'.
+
+If none is found, the built-in defaults will be used. Those defaults can be seen by using the `show-specs` option. You can also see them at this link: [SPECS](SPECS.md). 
 
 AUTHOR
 ======
