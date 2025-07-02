@@ -96,11 +96,10 @@ sub rad2deg($radians) is export {
 }
 
 sub create-grid(
-    # caller provides the $page
+    # caller provides the $page to mark on
     :$page!,
-    :$gp!, #
-    :$code = "Letter",
-    :$force,
+    :$gp!, # the GPaper object
+    :$code = "Letter", # paper type
     :$debug,
     ) is export {
 
@@ -172,12 +171,12 @@ sub create-grid(
         HERE
     }
 
-#=begin comment
+=begin comment
     # caller should do this:
     my $pdf  = PDF::Lite.new;
     $pdf.media-box = 0, 0, $page-width, $page-height;
     my $page = $pdf.add-page;
-#=end comment
+=end comment
 
 #=begin comment
 
