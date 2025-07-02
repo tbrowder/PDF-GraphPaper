@@ -1,6 +1,7 @@
 unit module PDF::GraphPaper::Classes;
 
 use PDF::GraphPaper::Subs;
+use PDF::GraphPaper::Vars;
 
 class GPaper is export {
 
@@ -40,47 +41,38 @@ submethod TWEAK {
     if is-odd($!cells-per-grid) {
         $!minor-grids = False; # forced False
     }
+
+    # generate data to enable various queries in
+    # a certain order
 }
 
-method is-odd(Int $i --> Bool) {
-    if $i div 2 == 1 {
-        return True;
-    }
-    False
-}
-
-constant %valid-keys = set <
-
-units
-media
-orientation
-margins
-margin-t
-margin-b
-margin-l
-margin-r
-
-cell-size-x
-
-cell-size-y
-
-page-width
-page-height
-
-major-grids
-minor-grids
-cells-per-grid
-cell-linewidth
-mid-grid-linewidth
-
-grid-linewidth
->;
 
 method is-valid-key($key --> Bool) {
     if %valid-keys{$key}:exists {
         return True;
     }
     False
+}
+
+method show-spec {
+    # attributes in desired order
+    my @attributes = @valid-attributes;
+    # a hash of attrs and current values
+    my %attrs;
+
+    # current attribute values;
+    my @attrs = self.^attributes;
+    my $alen = 0;
+    for @attrs -> $a {
+        my $val = $a.get_value: self;
+        %attrs{$a} = $val;
+        my $len = $a.chars;
+        $alen = $len if $len > $alen;
+    }
+    for @attributes -> $a {
+        my $v = %attrs{$a};
+        say sprintf '%*.*s', $alen, $alen, $a, " $v";, 
+    }
 }
 
 } # end of exported class GPaper

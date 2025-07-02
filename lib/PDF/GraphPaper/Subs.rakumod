@@ -2,13 +2,11 @@ unit module PDF::GraphPaper::Subs;
 
 use PDF::GraphPaper::Vars;
 
-sub is-odd(Int $num) is export {
-    if $num % 2 == 1 {
-        return True;
+sub is-odd(Int $num --> Bool) is export {
+    if $num div 2 == 1 {
+        return True
     }
-    else {
-        return False;
-    }
+    False
 }
 
 sub create-spec-file(
