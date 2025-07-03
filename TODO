@@ -1,9 +1,18 @@
-Allow for a single gridded line like a ruler
-  vscale
+Fix all modes and options:
+  * = done
+
+   vscale
+      Allow for a single gridded line like a ruler
+  
+   spec=X
+
+  *file.pdf
+  *show-spec
+  *force
 
 Move to multi MAINs
 
-Fix test t/2/*t to eliminate:
+=done Fix test t/2/*t to eliminate:
     @!attrs
     %!attr
 
