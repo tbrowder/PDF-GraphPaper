@@ -3,8 +3,8 @@ unit module PDF::GraphPaper::Classes;
 use PDF::GraphPaper::Subs;
 use PDF::GraphPaper::Vars;
 
-class GPaper is export {
-
+role Data {
+    # 18 attributes with default values, in desired order
     has $.units is rw       = "in";       # default
     has $.media is rw       = "letter";   # default
     has $.orientation is rw = "portrait"; # default
@@ -22,79 +22,6 @@ class GPaper is export {
     has $.cell-size-y is rw =  0.1 * 72; # desired minimum cell
                                      #   size (inches)
     has $.page-width  is rw =  8.5 * 72;
-    # attributes in desired order
-    # attributes in desired order
-    my @attributes = @valid-keys;
-    # a hash of attrs and current values
-    my %attrs;
-
-    # current attribute values;
-    my @attrs = self.^attributes;
-    my $alen = 0;
-    for @attrs -> $a {
-        my $val = $a.get_value: self;
-        %attrs{$a} = $val;
-        my $len = $a.chars;
-        $alen = $len if $len > $alen;
-    }
-    for @attributes -> $a {
-        my $v = %attrs{$a};
-        say sprintf('%*.*s', $alen, $alen, $a, " $v");
-    }
-    my @attributes = @valid-keys;
-    # a hash of attrs and current values
-    my %attrs;
-
-    # current attribute values;
-    my @attrs = self.^attributes;
-    my $alen = 0;
-    for @attrs -> $a {
-        my $val = $a.get_value: self;
-        %attrs{$a} = $val;
-        my $len = $a.chars;
-        $alen = $len if $len > $alen;
-    }
-    for @attributes -> $a {
-        my $v = %attrs{$a};
-        say sprintf '%*.*s', $alen, $alen, $a, " $v";, 
-    }
-    # attributes in desired order
-    my @attributes = @valid-keys;
-    # a hash of attrs and current values
-    my %attrs;
-
-    # current attribute values;
-    my @attrs = self.^attributes;
-    my $alen = 0;
-    for @attrs -> $a {
-        my $val = $a.get_value: self;
-        %attrs{$a} = $val;
-        my $len = $a.chars;
-        $alen = $len if $len > $alen;
-    }
-    for @attributes -> $a {
-        my $v = %attrs{$a};
-        say sprintf '%*.*s', $alen, $alen, $a, " $v";, 
-    }
-    # attributes in desired order
-    my @attributes = @valid-keys;
-    # a hash of attrs and current values
-    my %attrs;
-
-    # current attribute values;
-    my @attrs = self.^attributes;
-    my $alen = 0;
-    for @attrs -> $a {
-        my $val = $a.get_value: self;
-        %attrs{$a} = $val;
-        my $len = $a.chars;
-        $alen = $len if $len > $alen;
-    }
-    for @attributes -> $a {
-        my $v = %attrs{$a};
-        say sprintf '%*.*s', $alen, $alen, $a, " $v";, 
-    }
-
     has $.page-height is rw = 11.0 * 72;
 
     has $.major-grids is rw = True;
@@ -109,8 +36,37 @@ class GPaper is export {
     has $.mid-grid-linewidth is rw = 0.75; # heavier line width
                                            #  (for even cpg)
     has $.grid-linewidth is rw     = 1.40; # heavier line width
+}
+
+class GPaper does Data is export {
+
+    # an array of Data attr names and current values as word pairs
+    has @!data;
 
     submethod TWEAK {
+        # attribute names in desired order
+        # use @valid-keys from Vars;
+        # an array of attr names and current values as word pairs
+
+        # fill the data array with its attr names and current values
+        =begin comment
+        @!data = 
+            "foo $!foo",
+            "bar $!bar",
+        ;
+        =end comment
+        # current attribute values;
+        my $alen = 0;
+        for @valid-keys.kv -> $i is copy, $attr {
+            my $data = "$attr $!attr"
+            @!data.push: $data;
+            my $len = $attr.chars;
+            $alen = $len if $len > $alen;
+        }
+        for @attributes -> $a {
+            my $v = %attrs{$a};
+            say sprintf '%*.*s', $alen, $alen, $a, " $v";,
+        }
         # attributes in desired order
         my @attributes = @valid-keys;
         # a hash of attrs and current values
@@ -127,7 +83,7 @@ class GPaper is export {
         }
         for @attributes -> $a {
             my $v = %attrs{$a};
-            say sprintf '%*.*s', $alen, $alen, $a, " $v";, 
+            say sprintf '%*.*s', $alen, $alen, $a, " $v";,
         }
         # attributes in desired order
         my @attributes = @valid-keys;
@@ -145,25 +101,7 @@ class GPaper is export {
         }
         for @attributes -> $a {
             my $v = %attrs{$a};
-            say sprintf '%*.*s', $alen, $alen, $a, " $v";, 
-        }
-        # attributes in desired order
-        my @attributes = @valid-keys;
-        # a hash of attrs and current values
-        my %attrs;
-
-        # current attribute values;
-        my @attrs = self.^attributes;
-        my $alen = 0;
-        for @attrs -> $a {
-            my $val = $a.get_value: self;
-            %attrs{$a} = $val;
-            my $len = $a.chars;
-            $alen = $len if $len > $alen;
-        }
-        for @attributes -> $a {
-            my $v = %attrs{$a};
-            say sprintf '%*.*s', $alen, $alen, $a, " $v";, 
+            say sprintf '%*.*s', $alen, $alen, $a, " $v";,
         }
         if is-odd($!cells-per-grid) {
             $!minor-grids = False; # forced False
@@ -188,7 +126,7 @@ class GPaper is export {
         }
         for @attributes -> $a {
             my $v = %attrs{$a};
-            say sprintf '%*.*s', $alen, $alen, $a, " $v";, 
+            say sprintf '%*.*s', $alen, $alen, $a, " $v";,
         }
     }
 
@@ -222,7 +160,7 @@ class GPaper is export {
         }
         for @attributes -> $a {
             my $v = %attrs{$a};
-            say sprintf '%*.*s', $alen, $alen, $a, " $v";, 
+            say sprintf '%*.*s', $alen, $alen, $a, " $v";,
         }
     }
 
