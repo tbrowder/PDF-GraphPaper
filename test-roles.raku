@@ -56,5 +56,5 @@ for @arr.kv -> $i is copy, $s {
     my $a = $s.words.head;
     my $v = $s.words.tail;
 
-    say sprintf '%*.*s %s', $alen, $alen, $a, " $v";
+    say sprintf '%*.*s  %s', $alen, $alen, $a, $v;
 }
