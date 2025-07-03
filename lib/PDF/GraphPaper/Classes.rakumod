@@ -3,7 +3,7 @@ unit module PDF::GraphPaper::Classes;
 use PDF::GraphPaper::Subs;
 use PDF::GraphPaper::Vars;
 
-role Data {
+role DefaultAttributes {
     # 18 attributes with default values, in desired order
     has $.units is rw       = "in";       # default
     has $.media is rw       = "letter";   # default
@@ -38,38 +38,59 @@ role Data {
     has $.grid-linewidth is rw     = 1.40; # heavier line width
 }
 
-class GPaper does Data is export {
+class GPaper does DefaultAttributes is export {
 
-    # an array of Data attr names and current values as word pairs
-    has @.data;
-    has $.attr; # dummy?
+    # an array of attribute names and current values as word pairs
+    has @.attrs;
+    has %.attr; 
 
     submethod TWEAK {
         # attribute names in desired order
         # use @valid-keys from Vars;
         # an array of attr names and current values as word pairs
 
-        # fill the data array with its attr names and current values
+        # fill the attrs array with its attr names and current values
+        # fill the attr hash by name and value for easy lookup
+
+        # current attribute values from the role:
+        my @role-attrs = self.^attributes;
+        for @role-attrs -> $a {
+            my $val = $a.get_value: self;
+            my $data = "$a $val";
+            note "DEBUG: curr attr: $a";
+            note "         attr val: $val";
+            # fill @.attrs
+            @!attrs.push: $data;
+            # fill %.attr
+            %!attr{$a} = $val;
+        }
+
         =begin comment
-        @!data =
+        @!attrs =
             "foo $!foo",
             "bar $!bar",
         ;
         =end comment
+        =begin comment
         # current attribute values;
         my $alen = 0;
         for @valid-keys.kv -> $i is copy, $attr {
             my $data = "$attr $!attr";
-            @!data.push: $data;
+            @!attrs.push: $data;
+#           %!attr{$attr} = $!attr;
             my $len = $attr.chars;
             $alen = $len if $len > $alen;
         }
 
-        =begin comment
-        for @attributes -> $a {
-            my $v = %attrs{$a};
-            say sprintf '%*.*s', $alen, $alen, $a, " $v";,
+        say "DEBUG: attrs and current values:";
+        for @!attrs -> $s {
+            my $a = $s.words.head;  
+            my $v = $s.words.tail;  
+            say sprintf '%*.*s  s', $alen, $alen, $a, " $v";
         }
+        =end comment
+
+        =begin comment
         # attributes in desired order
         my @attributes = @valid-keys;
         # a hash of attrs and current values
