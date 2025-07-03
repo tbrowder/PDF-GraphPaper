@@ -95,6 +95,13 @@ sub rad2deg($radians) is export {
     $radians * 180 / pi
 }
 
+sub show-spec(
+    :$debug,
+    ) is export {
+    my $gp = GPaper.new;
+    $gp.show-spec :$debug;
+}
+
 sub create-grid(
     # caller provides the $page to mark on
     :$page!,
@@ -298,8 +305,8 @@ sub run(@args) is export {
 
     # handle the args
     if $show-spec {
-        say "show-spec: not yet implepented...";
-#       create-spec-file $ofil, :$debug;
+        #say "show-spec: not yet implepented...";
+        show-spec :$debug;
     }
     elsif $exe {
         say "Creating output file '$ofil'...";
