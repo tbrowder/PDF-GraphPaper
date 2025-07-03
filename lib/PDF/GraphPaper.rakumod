@@ -31,9 +31,9 @@ sub show-paper-sizes(
 }
 
 sub get-paper-dimens(
-    $code is copy where $code ~~ /:i 
+    $code is copy where $code ~~ /:i
         letter | legal | a0 | a1 | a2 | a3 | a4 | a5 | b4 | b5 |
-        executive | ledger | folio | quarto | statement | tabloid 
+        executive | ledger | folio | quarto | statement | tabloid
         /;
     :$debug,
     --> List
@@ -42,23 +42,23 @@ sub get-paper-dimens(
     #--> List # llx, lly, urx, ury (PS points)
     with $code {
         when /letter/ { 0, 0, 0, 0 };
-        when /legal/ { 0, 0, 0, 0 }; 
-        when /a0/  { 0, 0, 0, 0 }; 
-        when /a1/ { 0, 0, 0, 0 }; 
-        when /a2/ { 0, 0, 0, 0 }; 
-        when /a3/   { 0, 0, 0, 0 }; 
-        when /a4/   { 0, 0, 0, 0 }; 
-        when /a5/   { 0, 0, 0, 0 }; 
-        when /b4/   { 0, 0, 0, 0 }; 
-        when /b5/  { 0, 0, 0, 0 }; 
-        when /executive/   { 0, 0, 0, 0 }; 
-        when /ledger/   { 0, 0, 0, 0 }; 
-        when /folio/   { 0, 0, 0, 0 }; 
-        when /quarto/   { 0, 0, 0, 0 }; 
-        when /statement/   { 0, 0, 0, 0 }; 
-        when /tabloid/ { 0, 0, 0, 0 }; 
+        when /legal/ { 0, 0, 0, 0 };
+        when /a0/  { 0, 0, 0, 0 };
+        when /a1/ { 0, 0, 0, 0 };
+        when /a2/ { 0, 0, 0, 0 };
+        when /a3/   { 0, 0, 0, 0 };
+        when /a4/   { 0, 0, 0, 0 };
+        when /a5/   { 0, 0, 0, 0 };
+        when /b4/   { 0, 0, 0, 0 };
+        when /b5/  { 0, 0, 0, 0 };
+        when /executive/   { 0, 0, 0, 0 };
+        when /ledger/   { 0, 0, 0, 0 };
+        when /folio/   { 0, 0, 0, 0 };
+        when /quarto/   { 0, 0, 0, 0 };
+        when /statement/   { 0, 0, 0, 0 };
+        when /tabloid/ { 0, 0, 0, 0 };
 
-        default { 0, 0, 0, 0 }; 
+        default { 0, 0, 0, 0 };
     }
 
     my %h;
@@ -122,14 +122,16 @@ sub create-grid(
     # (or cells if no grids are desired) for the desired paper,
     # orientation, cell-size, and  margins.
     #===============================================================
-    # defaults (with limited user inputs via the $np object for now):
-    my $page-width  =  8.5 * 72; # <= should be done in TWEAK
-    my $page-height = 11.0 * 72; # <= should be done in TWEAK
-    # individual margin settings should be done in TWEAK
+    # defaults (with limited user inputs via the $gp object for now):
+    my $page-width  = $gp.page-width; #  8.5 * 72; 
+    my $page-height = $gp.page-height; #11.0 * 72;
 
-    my $max-graph-width  = $page-width  - $gp.margins * 2;
-    my $max-graph-height = $page-height - $gp.margins * 2;
-    say "DEBUG: max-graph-width = $max-graph-width" if $debug;
+    my $max-graph-width  = $page-width  - ($gp.margins * 2);
+    my $max-graph-height = $page-height - ($gp.margins * 2);
+
+    say "DEBUG: max-graph-width  = $max-graph-width" if 1 or $debug;
+    say "DEBUG: max-graph-height = $max-graph-height" if 1 or $debug;
+
     say "DEBUG: \$gp.cell-size-x: {$gp.cell-size-x}" if $debug;
     say "DEBUG: \$gp.cell-size-y: {$gp.cell-size-y}" if $debug;
 
@@ -138,26 +140,31 @@ sub create-grid(
 
     say "DEBUG: \$max-ncells-x: {$max-ncells-x}" if $debug;
 
+    # calculate major grids from page size
     my $ngrids-x = $gp.major-grids
                    ?? floor($max-ncells-x div $gp.cells-per-grid)
                    !! 0;
     my $ngrids-y = $gp.major-grids
                    ?? floor($max-ncells-y div $gp.cells-per-grid)
                    !! 0;
+
+    # calculate minor grids from page size
     my $ncells-x = $ngrids-x
                    ?? ($ngrids-x * $gp.cells-per-grid)
                    !! $max-ncells-x;
     my $ncells-y = $ngrids-y
                    ?? ($ngrids-y * $gp.cells-per-grid)
                    !! $max-ncells-y;
-    my $graph-size-width = $gp.major-grids
+
+    # calculate actual gridded area dimensions
+    my $graph-width = $gp.major-grids
                ?? ($ngrids-x * $gp.cells-per-grid * $gp.cell-size-x)
                !! ($ncells-x * $gp.cell-size-x);
-    my $graph-size-height = $gp.major-grids
+    my $graph-height = $gp.major-grids
                ?? ($ngrids-y * $gp.cells-per-grid * $gp.cell-size-y)
                !! ($ncells-y * $gp.cell-size-y);
 
-    if $debug {
+    if 0 or $debug {
         my $csx  = $gp.cell-size-x/72.0;
         my $csy  = $gp.cell-size-y/72.0;
         my $m    = $gp.margins/72.0;
@@ -165,7 +172,7 @@ sub create-grid(
         my $ngy  = $ngrids-y;
         my $ncx  = $ncells-x;
         my $ncy  = $ncells-y;
-        my $cpgx = 
+        my $cpgx =
         say qq:to/HERE/;
         Current graph paper metrics:
           cell size (in)     : $csx  x $csy
@@ -185,11 +192,12 @@ sub create-grid(
     my $page = $pdf.add-page;
 =end comment
 
-#=begin comment
-
     # Translate to the lower-left corner of the grid area
-    my $llx = 0 + 0.5 * $page-width - 0.5 * $graph-size-width;
-    my $lly = $page-height - 72 - $graph-size-height;
+    my $mid-point-x = 0.5 * $graph-width;
+    my $mid-point-y = 0.5 * $graph-height;
+
+    my $llx = 0 + (0.5 * $page-width)  - (0.5 * $graph-width);
+    my $lly = 0 + (0.5 * $page-height) - (0.5 * $graph-height);
 
     $page.graphics: {
         .transform: :translate($llx, $lly);
@@ -211,8 +219,8 @@ sub create-grid(
                 .LineWidth = $gp.cell-linewidth;
             }
             # HORIZONTAL line
-            .MoveTo: 0,                 $y;
-            .LineTo: $graph-size-width, $y;
+            .MoveTo: 0,            $y;
+            .LineTo: $graph-width, $y;
             .Stroke;
         }
         say "DEBUG: Grid LineWidth = {$gp.cell-linewidth}" if $debug;
@@ -235,7 +243,7 @@ sub create-grid(
             }
             # VERTICAL line
             .MoveTo: $x, 0;
-            .LineTo: $x, $graph-size-height;
+            .LineTo: $x, $graph-height;
             .Stroke;
         }
         say "DEBUG: Grid LineWidth = {$gp.cell-linewidth}" if $debug;
@@ -333,6 +341,7 @@ sub run(@args) is export {
                 exit;
             }
             say "Overwriting existing file '$ofil'...";
+            $pdf.save-as: $ofil;
         }
         else {
             $pdf.save-as: $ofil;
