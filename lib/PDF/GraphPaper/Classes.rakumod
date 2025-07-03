@@ -41,7 +41,8 @@ role Data {
 class GPaper does Data is export {
 
     # an array of Data attr names and current values as word pairs
-    has @!data;
+    has @.data;
+    has $.attr; # dummy?
 
     submethod TWEAK {
         # attribute names in desired order
@@ -50,7 +51,7 @@ class GPaper does Data is export {
 
         # fill the data array with its attr names and current values
         =begin comment
-        @!data = 
+        @!data =
             "foo $!foo",
             "bar $!bar",
         ;
@@ -58,11 +59,13 @@ class GPaper does Data is export {
         # current attribute values;
         my $alen = 0;
         for @valid-keys.kv -> $i is copy, $attr {
-            my $data = "$attr $!attr"
+            my $data = "$attr $!attr";
             @!data.push: $data;
             my $len = $attr.chars;
             $alen = $len if $len > $alen;
         }
+
+        =begin comment
         for @attributes -> $a {
             my $v = %attrs{$a};
             say sprintf '%*.*s', $alen, $alen, $a, " $v";,
@@ -128,6 +131,7 @@ class GPaper does Data is export {
             my $v = %attrs{$a};
             say sprintf '%*.*s', $alen, $alen, $a, " $v";,
         }
+        =end comment
     }
 
     method attrs(--> Hash) {
@@ -136,13 +140,16 @@ class GPaper does Data is export {
         #      value: attr name, attr value
     }
 
+    =begin comment
     method is-valid-key($key --> Bool) {
         if %valid-keys{$key}:exists {
             return True;
         }
         False
     }
+    =end comment
 
+    =begin comment
     method show-spec {
         # attributes in desired order
         my @attributes = @valid-keys;
@@ -160,8 +167,9 @@ class GPaper does Data is export {
         }
         for @attributes -> $a {
             my $v = %attrs{$a};
-            say sprintf '%*.*s', $alen, $alen, $a, " $v";,
+            say sprintf '%*.*s  %s', $alen, $alen, $a, $v;
         }
     }
+    =end comment
 
 } # end of exported class GPaper
