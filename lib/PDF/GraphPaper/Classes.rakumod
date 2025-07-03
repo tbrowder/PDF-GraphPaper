@@ -88,7 +88,7 @@ class GPaper does DefaultAttributes is export {
         for @!attrs -> $s {
             my $a = $s.words.head;  
             my $v = $s.words.tail;  
-            say sprintf '%*.*s  s', $alen, $alen, $a, " $v";
+            say sprintf '%*.*s  %s', $alen, $alen, $a, $v;
         }
         =end comment
 
@@ -109,7 +109,7 @@ class GPaper does DefaultAttributes is export {
         }
         for @attributes -> $a {
             my $v = %attrs{$a};
-            say sprintf '%*.*s', $alen, $alen, $a, " $v";,
+            say sprintf '%-*.*s  %s', $alen, $alen, $a, $v;
         }
         # attributes in desired order
         my @attributes = @valid-keys;
@@ -127,7 +127,7 @@ class GPaper does DefaultAttributes is export {
         }
         for @attributes -> $a {
             my $v = %attrs{$a};
-            say sprintf '%*.*s', $alen, $alen, $a, " $v";,
+            say sprintf '%*.*s  %s', $alen, $alen, $a, $v;
         }
         if is-odd($!cells-per-grid) {
             $!minor-grids = False; # forced False
@@ -152,15 +152,9 @@ class GPaper does DefaultAttributes is export {
         }
         for @attributes -> $a {
             my $v = %attrs{$a};
-            say sprintf '%*.*s', $alen, $alen, $a, " $v";,
+            say sprintf '%*.*s  %s', $alen, $alen, $a, $v;
         }
         =end comment
-    }
-
-    method attrs(--> Hash) {
-        # the hash:
-        #   key: lower-case key in desired order
-        #      value: attr name, attr value
     }
 
     =begin comment
@@ -172,27 +166,28 @@ class GPaper does DefaultAttributes is export {
     }
     =end comment
 
-    =begin comment
     method show-spec {
         # attributes in desired order
-        my @attributes = @valid-keys;
-        # a hash of attrs and current values
-        my %attrs;
-
-        # current attribute values;
-        my @attrs = self.^attributes;
+        # we can use the @!attrs to get the data
         my $alen = 0;
-        for @attrs -> $a {
-            my $val = $a.get_value: self;
-            %attrs{$a} = $val;
+        my @oattrs; # correct data, but $! stripped
+        for self.attrs -> $s {
+            my $a = $s.words.head;
+            $a ~~ s/^'$!'//;
             my $len = $a.chars;
             $alen = $len if $len > $alen;
+            my $v = $s.words.tail;
+            my $data = "$a $v";
+            @oattrs.push: $data;
         }
-        for @attributes -> $a {
-            my $v = %attrs{$a};
-            say sprintf '%*.*s  %s', $alen, $alen, $a, $v;
+
+        say "Specification:";
+        for @oattrs -> $s {
+            my $a = $s.words.head;
+            my $v = $s.words.tail;
+            # the desired, left justified key:
+            say sprintf '%-*s  %s', $alen, $a, $v;
         }
     }
-    =end comment
 
 } # end of exported class GPaper
