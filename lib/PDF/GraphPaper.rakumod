@@ -102,6 +102,23 @@ sub show-spec(
     $gp.show-spec :$debug;
 }
 
+sub handle-point(
+    # caller provides the $page to mark on
+    :$page!,
+    :$gp!, # the GPaper object
+    :$code = "Letter", # paper type
+    :$debug,
+    ) is export {
+}
+sub vscale(
+    # caller provides the $page to mark on
+    :$page!,
+    :$gp!, # the GPaper object
+    :$code = "Letter", # paper type
+    :$debug,
+    ) is export {
+}
+
 sub create-grid(
     # caller provides the $page to mark on
     :$page!,
@@ -185,19 +202,26 @@ sub create-grid(
         HERE
     }
 
-=begin comment
-    # caller should do this:
-    my $pdf  = PDF::Lite.new;
-    $pdf.media-box = 0, 0, $page-width, $page-height;
-    my $page = $pdf.add-page;
-=end comment
-
     # Translate to the lower-left corner of the grid area
     my $mid-point-x = 0.5 * $graph-width;
     my $mid-point-y = 0.5 * $graph-height;
 
     my $llx = 0 + (0.5 * $page-width)  - (0.5 * $graph-width);
     my $lly = 0 + (0.5 * $page-height) - (0.5 * $graph-height);
+
+    =begin comment
+    if $vscale {
+        draw-vscale $page, :$llx, :$debug;
+	
+        # finished with this page
+        return;
+    }
+    elsif $handle-point {
+	
+        # finished with this page
+        return;
+    }
+    =end comment
 
     $page.graphics: {
         .transform: :translate($llx, $lly);
@@ -248,13 +272,6 @@ sub create-grid(
         }
         say "DEBUG: Grid LineWidth = {$gp.cell-linewidth}" if $debug;
     }
-#=end comment
-
-=begin comment
-    # caller should do this:
-    $pdf.save-as: $ofil;
-    say "See output file: '$ofil'";
-=end comment
 } # sub create-grid
 
 sub run(@args) is export {
@@ -283,6 +300,9 @@ sub run(@args) is export {
         when /:i '.pdf' $/ {
             $ofil = $_.IO;
             ++$exe;
+        }
+        when /:i v / {
+            ++$vscale;
         }
         when /^:i sh / {
             # create the default spec file, show on STDOUT
@@ -334,7 +354,7 @@ sub run(@args) is export {
         my $page = $pdf.add-page;
         my $gp = PDF::GraphPaper::Classes::GPaper.new;
         # make any changes to $gp
-        create-grid :$page, :$gp, :$debug;
+        create-grid :$page, :$gp, :vscale, :$debug;
         if $ofil.IO.r {
             unless $force {
                 say "Output file '$ofil' exists...exiting";
