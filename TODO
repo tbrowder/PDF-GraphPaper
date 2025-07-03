@@ -3,3 +3,8 @@ Allow for a single gridded line like a ruler
 
 Move to multi MAINs
 
+Fix test t/2/*t to eliminate:
+    @!attrs
+    %!attr
+
+

@@ -173,6 +173,9 @@ class GPaper does DefaultAttributes is export {
         my @oattrs; # correct data, but $! stripped
         for self.attrs -> $s {
             my $a = $s.words.head;
+            next if $a ~~ /^ '@!'/;
+            next if $a ~~ /^ '%!'/;
+
             $a ~~ s/^'$!'//;
             my $len = $a.chars;
             $alen = $len if $len > $alen;
