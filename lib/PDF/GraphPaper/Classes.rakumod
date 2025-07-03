@@ -30,7 +30,6 @@ role DefaultAttributes {
     has $.cells-per-grid is rw = 10; # heavier line every X cells
 
     # standard linewidths in PS points
-    # TODO allow customization
     # mid-grid line only for even number of cells-per-grid
     has $.cell-linewidth     is rw = 0;    # very fine line
     has $.mid-grid-linewidth is rw = 0.75; # heavier line width
@@ -66,95 +65,6 @@ class GPaper does DefaultAttributes is export {
             # fill %.attr
             %!attr{$a} = $val;
         }
-
-        =begin comment
-        @!attrs =
-            "foo $!foo",
-            "bar $!bar",
-        ;
-        =end comment
-        =begin comment
-        # current attribute values;
-        my $alen = 0;
-        for @valid-keys.kv -> $i is copy, $attr {
-            my $data = "$attr $!attr";
-            @!attrs.push: $data;
-#           %!attr{$attr} = $!attr;
-            my $len = $attr.chars;
-            $alen = $len if $len > $alen;
-        }
-
-        say "DEBUG: attrs and current values:";
-        for @!attrs -> $s {
-            my $a = $s.words.head;  
-            my $v = $s.words.tail;  
-            say sprintf '%*.*s  %s', $alen, $alen, $a, $v;
-        }
-        =end comment
-
-        =begin comment
-        # attributes in desired order
-        my @attributes = @valid-keys;
-        # a hash of attrs and current values
-        my %attrs;
-
-        # current attribute values;
-        my @attrs = self.^attributes;
-        my $alen = 0;
-        for @attrs -> $a {
-            my $val = $a.get_value: self;
-            %attrs{$a} = $val;
-            my $len = $a.chars;
-            $alen = $len if $len > $alen;
-        }
-        for @attributes -> $a {
-            my $v = %attrs{$a};
-            say sprintf '%-*.*s  %s', $alen, $alen, $a, $v;
-        }
-        # attributes in desired order
-        my @attributes = @valid-keys;
-        # a hash of attrs and current values
-        my %attrs;
-
-        # current attribute values;
-        my @attrs = self.^attributes;
-        my $alen = 0;
-        for @attrs -> $a {
-            my $val = $a.get_value: self;
-            %attrs{$a} = $val;
-            my $len = $a.chars;
-            $alen = $len if $len > $alen;
-        }
-        for @attributes -> $a {
-            my $v = %attrs{$a};
-            say sprintf '%*.*s  %s', $alen, $alen, $a, $v;
-        }
-        if is-odd($!cells-per-grid) {
-            $!minor-grids = False; # forced False
-        }
-
-        # generate data to enable various queries in
-        # a certain order
-
-        # attributes in desired order
-        my @attributes = @valid-keys;
-        # a hash of attrs and current values
-        my %attrs;
-
-        # current attribute values;
-        my @attrs = self.^attributes;
-        my $alen = 0;
-        for @attrs -> $a {
-            my $val = $a.get_value: self;
-            %attrs{$a} = $val;
-            my $len = $a.chars;
-            $alen = $len if $len > $alen;
-        }
-        for @attributes -> $a {
-            my $v = %attrs{$a};
-            say sprintf '%*.*s  %s', $alen, $alen, $a, $v;
-        }
-        =end comment
     }
 
     =begin comment
@@ -184,7 +94,8 @@ class GPaper does DefaultAttributes is export {
             @oattrs.push: $data;
         }
 
-        say "Specification:";
+        my $ns = @oattrs.elems;
+        say "\# Current list of $ns attributes and values:";
         for @oattrs -> $s {
             my $a = $s.words.head;
             my $v = $s.words.tail;
