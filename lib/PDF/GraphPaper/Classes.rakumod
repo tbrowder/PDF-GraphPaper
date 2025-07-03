@@ -57,8 +57,10 @@ class GPaper does DefaultAttributes is export {
         for @role-attrs -> $a {
             my $val = $a.get_value: self;
             my $data = "$a $val";
-            note "DEBUG: curr attr: $a";
-            note "         attr val: $val";
+            if 0 {
+                note "DEBUG: curr attr: $a";
+                note "         attr val: $val";
+            }
             # fill @.attrs
             @!attrs.push: $data;
             # fill %.attr

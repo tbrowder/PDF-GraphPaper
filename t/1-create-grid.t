@@ -25,7 +25,7 @@ isa-ok $page, PDF::Content::Page;
 
 #=begin comment
 lives-ok {
-    create-grid :$page, :$gp, :debug;
+    create-grid :$page, :$gp; # , :debug;
 }, "test sub create-grid";
 #=end comment
 
