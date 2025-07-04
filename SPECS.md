@@ -51,4 +51,11 @@ The GPaper class attributes
     has $.mid-grid-linewidth is rw = 0.75; # heavier line width
                                            #  (for even cpg)
     has $.grid-linewidth is rw     = 1.40; # heavier line width
+    # 6 more attrs
+    has $.scale-t is rw = 0; # a scale on grid top 
+    has $.scale-b is rw = 0; # a scale on grid bottom
+    has $.scale-l is rw = 0; # a scale at grid left
+    has $.scale-r is rw = 0; # a scale at grid right
+    has $.grid-origin-x is rw = 0; # location of grid x origin 
+    has $.grid-origin-y is rw = 0; # location of grid y origin
 

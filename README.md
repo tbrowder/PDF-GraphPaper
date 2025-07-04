@@ -20,18 +20,30 @@ DESCRIPTION
 
 The default user measurements are inches for page descriptions (such as margins and grid dimensions and placement) and PostScript points for font sizes and adjustments. Alternatively, the user may choose centimeters for page descriptions.
 
-Ruled lines
+Grid scales
 -----------
 
-With the `ruler` option, a single ruled line can be placed on a page with its origin, angle, and length units as desired.
+With the `scale-X` options, a scale can be added for the grid at X where X is `T`, `B`, `L`, or `R` for the grid's top, bottom, left, or right edge, respectively. The real effect of the "position" letter is to (1) specify its direction and (2) to specify which side of the ruled line the numbers and tick marks appear. The "top" and "bottom" scales are parallel to those edges of the paper while "left" and "right" scales are parallel to those edges.
 
-The defaults are: origin X=0.5 inches, y=0 inches, angle=90 degrees, and length units of inches. The X axis is parallel to the bottom of the page, with magnitudes inreasing to the right.
+The scales can be added without the grid but using the grid corner parameters or specifically by using the `sparam` option for each desired scale. For example:
 
-Overlay
--------
+    sparam=L,36,36,500 
+    =end code.
 
-The user may easily overlay grids or ruled lines on an existing PDF document by providing its name in an option:
+    The default is not to add a scale. If added, the scales
+    are added with numbers in the current units and increasing
+    in magnitude to the top or right as approriate. The zero
+    points are at the grid's X and Y origin and covering the
+    edge lengths.
 
+    =head2 Overlay
+
+
+    The user may easily overlay grids or ruled lines on an
+    existing PDF document by providing its name in an 
+    option:
+
+    =begin code
     pdf-in=/path/to/pdf-file
 
 Binary file `make-graph-paper`
@@ -39,14 +51,19 @@ Binary file `make-graph-paper`
 
 The installed executable file, `make-graph-paper`, has the following required and optional arguments:
 
-    $pdf-out,      # desired name of the new PDF file
-                   # options:
-    :$pdf-in,      # source PDF document for overlays; if used
-                   #   it CANNOT be overwritten
-    :$ruler=False, # if True, writes the default ruler, no grid
-    :$force=False, # allow overwriting an existing input PDF
-    :$spec=X,      # specification file for this run
-    :$show-spec,   # if True, show a standard spcification file on STDOUT
+    $pdf-out,           # desired name of the new PDF file
+    # options:
+    IO::Path :$pdf-in,  # source PDF document for overlays; if used
+                        #   it CANNOT be overwritten
+    Bool :$grid=True    # produce a grid per the specifications
+    Bool :$force=False, # allow overwriting an existing input PDF
+         :$spec=X,      # where IO::Path X is a specification file 
+                        #   for this run
+    Bool :$show-spec,   # if True, show the default spcifications 
+                        #   on STDOUT
+    Str  :$scale,       # if nonempty, has codes from set "tblr" for 
+                        #   adding one or more scales 
+    Str  :$sbbox,       # llx, lly, width, height for scales and no grid
 
 The specification file
 ----------------------

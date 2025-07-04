@@ -109,7 +109,9 @@ sub handle-points(
     :$code = "Letter", # paper type
     :$debug,
     ) is export {
+    check-inputs :$page, :$gp;
 }
+
 sub vscale(
     # caller provides the $page to mark on
     :$page!,
@@ -117,6 +119,7 @@ sub vscale(
     :$code = "Letter", # paper type
     :$debug,
     ) is export {
+    check-inputs :$page, :$gp;
 }
 
 sub create-grid(
@@ -127,12 +130,7 @@ sub create-grid(
     :$debug,
     ) is export {
 
-    unless $page ~~ PDF::Content::Page {
-        die "FATAL: The input is NOT a PDF::Content::Page";
-    }
-    unless $gp ~~ PDF::GraphPaper::Classes::GPaper {
-        die "FATAL: The input is NOT a PDF::GraphPaper::Classes::GPaper";
-    }
+    check-inputs :$page, :$gp;
 
     #===============================================================
     # Determine maximum horizontal and vertical grid squares
@@ -408,4 +406,13 @@ sub help is export {
       vscale     - Creates a vertical scale at the left
                      of a page with X=0.5in and Y=0in
     HERE
+}
+
+sub check-inputs(:$page!, :$gp!) is export {
+    unless $page ~~ PDF::Content::Page {
+        die "FATAL: \$page is NOT a PDF::Content::Page";
+    }
+    unless $gp ~~ PDF::GraphPaper::Classes::GPaper {
+        die "FATAL: \$gp is NOT a PDF::GraphPaper::Classes::GPaper";
+    }
 }

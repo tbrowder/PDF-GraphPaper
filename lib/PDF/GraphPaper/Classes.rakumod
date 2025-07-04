@@ -114,3 +114,14 @@ class GPaper does DefaultAttributes is export {
     }
 
 } # end of exported class GPaper
+
+class Scale is export {
+    has $.llx      is rw = 0;
+    has $.lly      is rw = 0;
+    has $.length   is rw = 0;
+    has $.angle    is rw where * ~~ /^ 0|90 $/;
+    has $.location is rw where * ~~ /^ :i t|b|l|r/;
+
+    submethod TWEAK {
+    }
+}
