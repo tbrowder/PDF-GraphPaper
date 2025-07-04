@@ -102,7 +102,7 @@ sub show-spec(
     $gp.show-spec :$debug;
 }
 
-sub handle-point(
+sub handle-points(
     # caller provides the $page to mark on
     :$page!,
     :$gp!, # the GPaper object
@@ -288,21 +288,31 @@ sub run(@args) is export {
     =end comment
 
     my $debug     = 0;
-    my $show-spec = 0;
-    my $spec;
-    my $vscale    = 0;
     my $force     = 0;
     my $ofil;
+    my $spec; # use a spec file
 
-    my $exe = 0;
+    # the action subs
+    my $show-spec = 0;
+    # action subs requiring PDF output
+    my $pdf-vscale    = 0;
+    my $pdf-text-line = 0;
+    my $pdf-grid      = 0;
+
+    my $pdf = 0;
 
     for @args {
         when /:i '.pdf' $/ {
             $ofil = $_.IO;
-            ++$exe;
+            ++$pdf;
+        }
+        when /:i te $/ {
+            ++$pdf-text-line;
+            ++$pdf;
         }
         when /:i v / {
-            ++$vscale;
+            ++$pdf-vscale;
+            ++$pdf;
         }
         when /^:i sh / {
             # create the default spec file, show on STDOUT
@@ -316,7 +326,6 @@ sub run(@args) is export {
                 say "Exiting...";
                 exit;
             }
-            $exe = 1;
         }
         when /^:i d / {
             ++$debug;
@@ -333,12 +342,21 @@ sub run(@args) is export {
 
     # handle the args
     if $show-spec {
-        #say "show-spec: not yet implepented...";
         show-spec :$debug;
     }
-    elsif $exe {
+    elsif $pdf {
+        # these require a PDF output file
+        if $pdf-vscale {
+            say "Creating a vscale...";
+        }
+        elsif $pdf-text-line {
+            say "Creating a text-line...";
+        }
+        else {
+            # creates a pdf file and calls sub create-grid with it
+            say "Creating a graph...";
+        }  
         say "Creating output file '$ofil'...";
-        # creates a pdf file and calls sub create-grid with it
     }
     elsif $force {
         say "Added the 'force' option for overwriting files";
@@ -348,7 +366,7 @@ sub run(@args) is export {
         exit;
     }
 
-    if $exe {
+    if $pdf {
         # open the output file
         my $pdf = PDF::Lite.new;
         my $page = $pdf.add-page;

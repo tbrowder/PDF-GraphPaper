@@ -26,4 +26,13 @@ constant @valid-keys is export = [
 "mid-grid-linewidth",
 
 "grid-linewidth",
+
+# 6 more attrs
+"scale-t",
+"scale-b",
+"scale-l",
+"scale-r",
+"grid-origin-x",
+"grid-origin-y",
+
 ];

@@ -35,6 +35,15 @@ role DefaultAttributes {
     has $.mid-grid-linewidth is rw = 0.75; # heavier line width
                                            #  (for even cpg)
     has $.grid-linewidth is rw     = 1.40; # heavier line width
+
+    # 6 more attrs
+    has $.scale-t is rw = 0;
+    has $.scale-b is rw = 0;
+    has $.scale-l is rw = 0;
+    has $.scale-r is rw = 0;
+    has $.grid-origin-x is rw = 0;
+    has $.grid-origin-y is rw = 0;
+
 }
 
 class GPaper does DefaultAttributes is export {
