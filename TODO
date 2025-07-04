@@ -1,5 +1,10 @@
 Add reading user's spec in TWEAK
 
+Add classes
+  * = done
+   Scale
+  *GPaper
+
 Fix all modes and options:
   * = done
 
@@ -7,6 +12,8 @@ Fix all modes and options:
       Allow for a single gridded line like a ruler
   
    spec=X
+
+   text-line
 
   *file.pdf
   *show-spec

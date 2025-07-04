@@ -102,7 +102,7 @@ sub show-spec(
     $gp.show-spec :$debug;
 }
 
-sub handle-points(
+sub text-line(
     # caller provides the $page to mark on
     :$page!,
     :$gp!, # the GPaper object
@@ -416,3 +416,19 @@ sub check-inputs(:$page!, :$gp!) is export {
         die "FATAL: \$gp is NOT a PDF::GraphPaper::Classes::GPaper";
     }
 }
+
+sub create-scale(
+      :$page!,
+      :$gp!,
+Scale :$scale!,
+    ) is export {
+    check-inputs :$page, :$gp;
+
+    # for horizontal scales
+        # for top numbers and tick marks
+        # for bottom numbers and tick marks
+    # for vertical scales
+        # for left side numbers and tick marks
+        # for right side numbers and tick marks
+}
+
