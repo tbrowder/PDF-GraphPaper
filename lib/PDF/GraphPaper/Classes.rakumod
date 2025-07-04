@@ -1,5 +1,6 @@
 unit module PDF::GraphPaper::Classes;
 
+use Text::Utils :ALL;
 use PDF::GraphPaper::Subs;
 use PDF::GraphPaper::Vars;
 
@@ -74,7 +75,15 @@ class GPaper does DefaultAttributes is export {
             # fill %.attr
             %!attr{$a} = $val;
         }
-    }
+
+        if $pdf-cnf.IO.r {
+            # use the caller's attr values to update the class 
+            # instance
+            my @data = read-specs-file $pdf-cnf;
+        }
+        
+       
+    } # end of submethod TWEAK
 
     =begin comment
     method is-valid-key($key --> Bool) {
@@ -112,6 +121,7 @@ class GPaper does DefaultAttributes is export {
             say sprintf '%-*s  %s', $alen, $a, $v;
         }
     }
+
 
 } # end of exported class GPaper
 

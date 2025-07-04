@@ -13,7 +13,8 @@ use PDF::GraphPaper::Vars;
 use PDF::GraphPaper::Subs;
 use PDF::GraphPaper::Classes;
 
-my $pdf-cnf = "{%*ENV<HOME>}/pdf-graphpaper.cnf".IO // "";
+# moved to Vars.rakumod
+#my $pdf-cnf = "{%*ENV<HOME>}/pdf-graphpaper.cnf".IO // "";
 sub show-paper-sizes(
     :$debug,
     --> List

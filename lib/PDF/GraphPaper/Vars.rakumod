@@ -1,5 +1,7 @@
 unit module PDF::GraphPaper::Vars;
 
+our $pdf-cnf is export = "{%*ENV<HOME>}/pdf-graphpaper.cnf".IO // "";
+
 # A list in desired order of the current attributes.
 constant @valid-keys is export = [ 
 
