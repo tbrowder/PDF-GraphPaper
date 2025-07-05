@@ -58,32 +58,56 @@ role DefaultAttributes {
             my $v = @w.shift;
             with $k {
                 # when x { $!x = $v }
-                when "units" { $!units = $v } #               in
-                =begin comment
-                when "media               letter
-                orientation         portrait
-                margins             36
-                margin-t            -1
-                margin-b            -1
-                margin-l            -1
-                margin-r            -1
-                cell-size-x         7.2
-                cell-size-y         7.2
-                page-width          612
-                page-height         792
-                major-grids         True
-                minor-grids         True
-                cells-per-grid      10
-                cell-linewidth      0
-                mid-grid-linewidth  0.75
-                grid-linewidth      1.4
-                scale-t             0
-                scale-b             0
-                scale-l             0
-                scale-r             0
-                grid-origin-x       0
-                grid-origin-y       0
-                =end comment
+                when "units" { 
+                    $!units = $v } #               in
+                #=begin comment
+                when "media" { 
+                    $!media = $v } #               letter
+                when "orientation" {
+                    $!orientation = $v } #    portrait
+                when "margins" {
+                    $!margins  = $v.Numeric } #   36
+                when "margin-t" {
+                    $!margin-t       = $v.Numeric } #   -1
+                when "margin-b" {
+                    $!margin-b       = $v.Numeric } #   -1
+                when "margin-l" {
+                    $!margin-l       = $v.Numeric } #   -1
+                when "margin-r" {
+                    $!margin-r       = $v.Numeric } #   -1
+                when "cell-size-x" {
+                    $!cell-size-x       = $v.Numeric } #   7.2
+                when "cell-size-y" {
+                    $!cell-size-y       = $v.Numeric } #   7.2
+                when "page-width" {
+                    $!page-width       = $v.Numeric } #   612
+                when "page-height" {
+                    $!page-height       = $v.Numeric } #   792
+                when "major-grids" {
+                    $!major-grids  =  $v.Bool} #  True
+                when "minor-grids" {
+                    $!minor-grids       =  $v.Bool } # True
+                when "cells-per-grid" {
+                    $!cells-per-grid       = $v.Numeric } #10
+                when "cell-linewidth" {
+                    $!cell-linewidth       = $v.Numeric } #0
+                when "mid-grid-linewidth" {
+                    $!mid-grid-linewidth   = $v.Numeric } #0.75
+                when "grid-linewidth" {
+                    $!grid-linewidth   = $v.Numeric } #1.4
+                when "scale-t" { 
+                    $!scale-t  = $v.Numeric } #0
+                when "scale-b" { 
+                    $!scale-b  = $v.Numeric } #0
+                when "scale-l" { 
+                    $!scale-l  = $v.Numeric } #0
+                when "scale-r" {
+                    $!scale-r   = $v.Numeric } #0
+                when "grid-origin-x" {
+                    $!grid-origin-x   = $v.Numeric } #0
+                when "grid-origin-y" {
+                    $!grid-origin-y   = $v.Numeric } #0
+                #=end comment
                 
                 default { warn "WARNING: Unknown attribute '$_'" }
             }
