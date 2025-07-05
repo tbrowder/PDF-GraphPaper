@@ -1,6 +1,6 @@
 unit module PDF::GraphPaper::Classes;
 
-use Text::Utils :ALL;
+use Text::Utils :strip-comment;
 use PDF::GraphPaper::Subs;
 use PDF::GraphPaper::Vars;
 
@@ -45,13 +45,57 @@ role DefaultAttributes {
     has $.grid-origin-x is rw = 0;
     has $.grid-origin-y is rw = 0;
 
+    method update-from-file(IO::Path $ifil) {
+        for $ifil.IO.line -> $line is copy {
+            $line = strip-comment $line;
+            next unless $line ~~ /\S/;
+            my @w = $line.words;
+            my $nw = @w.elems;
+            unless $nw == 2 { 
+                die "FATAL: Expected 2 words but got $nw";
+            }
+            my $k = @w.shift;
+            my $v = @w.shift;
+            with $k {
+                # when x { $!x = $v }
+                when "units" { $!units = $v } #               in
+                =begin comment
+                when "media               letter
+                orientation         portrait
+                margins             36
+                margin-t            -1
+                margin-b            -1
+                margin-l            -1
+                margin-r            -1
+                cell-size-x         7.2
+                cell-size-y         7.2
+                page-width          612
+                page-height         792
+                major-grids         True
+                minor-grids         True
+                cells-per-grid      10
+                cell-linewidth      0
+                mid-grid-linewidth  0.75
+                grid-linewidth      1.4
+                scale-t             0
+                scale-b             0
+                scale-l             0
+                scale-r             0
+                grid-origin-x       0
+                grid-origin-y       0
+                =end comment
+                
+                default { warn "WARNING: Unknown attribute '$_'" }
+            }
+        }
+    }
 }
 
 class GPaper does DefaultAttributes is export {
 
     # an array of attribute names and current values as word pairs
     has @.attrs;
-    has %.attr; 
+    has %.attr;
 
     submethod TWEAK {
         # attribute names in desired order
@@ -77,12 +121,11 @@ class GPaper does DefaultAttributes is export {
         }
 
         if $pdf-cnf.IO.r {
-            # use the caller's attr values to update the class 
+            # use the caller's attr values to update the class
             # instance
             my @data = read-specs-file $pdf-cnf;
         }
-        
-       
+
     } # end of submethod TWEAK
 
     =begin comment
@@ -122,6 +165,38 @@ class GPaper does DefaultAttributes is export {
         }
     }
 
+    method use-user-cnf() {
+        return unless $pdf-cnf.IO.r;
+        for $pdf-cnf.IO.lines -> $line is copy {
+            $line = strip-comment $line;
+            next unless $line ~~ /\S/;
+            my @w = $line.words;
+            my $nw = @w.elems;
+            die "FATAL: Expected two words but got $nw";
+            my $attr  = @w.shift;
+            my $value = @w.shift;
+            # how to update it? see docs...
+            # my $attr = GPaper.^attributes(:X);
+        }
+        =begin comment
+        # from doc search for "set_value"
+        # method set_value(Mu $obj, Mu \new_val)
+        #   Binds the value 'new_val' to this attribute of 
+        #     object $obj.
+        class A {
+            has $!a = 5;
+            method speak() { say $!a; }
+        }
+        # in line below, [0] is the first attr in the class 
+        #   definition
+        my $attr = A.^attributes(:local)[0]; 
+        my $a = A.new;
+        $a.speak; # OUTPUT: «5␤»
+        $attr.set_value($a, 42);
+        $a.speak; # OUTPUT: «42␤»
+        =end comment
+
+    } # end of method 'use-user-cnf'
 
 } # end of exported class GPaper
 
