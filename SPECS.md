@@ -12,7 +12,7 @@ Your specification file entries must be in a 'key value' per line format, where 
 Notes
 -----
 
-  * It is an error to use a key that is not a class attribut.
+  * It is an error to use a key that is not a class attribute.
 
   * Enties are NOT case-sensitive.
 

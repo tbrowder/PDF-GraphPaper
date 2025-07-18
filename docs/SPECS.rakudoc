@@ -18,7 +18,7 @@ media A4
 
 =head2 Notes
 
-=item It is an error to use a key that is not a class attribut.
+=item It is an error to use a key that is not a class attribute.
 =item Enties are NOT case-sensitive.
 
 =head2 The GPaper class attributes

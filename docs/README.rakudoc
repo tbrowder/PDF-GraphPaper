@@ -20,7 +20,7 @@ users will use the 'Letter" (default) or 'A4' paper.
 
 The default user measurements are inches for page descriptions (such
 as margins and grid dimensions and placement) and PostScript points
-for font sizes and adjustments. Alternatively, the user may choose
+(72 points per inch) for font sizes and adjustments. Alternatively, the user may choose
 centimeters for page descriptions.
 
 =head2 Grid scales
@@ -46,7 +46,8 @@ desired scale. For example:
 
 =begin code
 sparam=L,36,36,500
-=end code.
+=end code
+
 
 =head2 Overlay
 

@@ -116,7 +116,7 @@ sub text-line(
 sub vscale(
     # caller provides the $page to mark on
     :$page!,
-    :$gp!, # the GPaper object
+    :$gp!, # the GPaper obj
     :$code = "Letter", # paper type
     :$debug,
     ) is export {
@@ -142,8 +142,23 @@ sub create-grid(
     my $page-width  = $gp.page-width; #  8.5 * 72; 
     my $page-height = $gp.page-height; #11.0 * 72;
 
-    my $max-graph-width  = $page-width  - ($gp.margins * 2);
-    my $max-graph-height = $page-height - ($gp.margins * 2);
+    # the 4 default margins from $gp
+    =begin comment
+    # allow for custom margins for each edge
+    has $.margin-t is rw = -1; # -1 indicates not set
+    has $.margin-b is rw = -1; # -1 indicates not set
+    has $.margin-l is rw = -1; # -1 indicates not set
+    has $.margin-r is rw = -1; # -1 indicates not set
+    =end comment
+
+    my ($Tm, $Bm, $Lm, $Rm);
+    $Tm = $gp.margin-t > -1 ?? $gp.margin-t !! $gp.margins;
+    $Bm = $gp.margin-b > -1 ?? $gp.margin-b !! $gp.margins;
+    $Lm = $gp.margin-l > -1 ?? $gp.margin-l !! $gp.margins;
+    $Rm = $gp.margin-r > -1 ?? $gp.margin-r !! $gp.margins;
+
+    my $max-graph-width  = $page-width  - ($Lm + $Rm);
+    my $max-graph-height = $page-height - ($Tm + $Bm);
 
     say "DEBUG: max-graph-width  = $max-graph-width" if 1 or $debug;
     say "DEBUG: max-graph-height = $max-graph-height" if 1 or $debug;
@@ -208,6 +223,8 @@ sub create-grid(
     my $llx = 0 + (0.5 * $page-width)  - (0.5 * $graph-width);
     my $lly = 0 + (0.5 * $page-height) - (0.5 * $graph-height);
 
+    #
+    #==== draw any scales
     =begin comment
     if $vscale {
         draw-vscale $page, :$llx, :$debug;
@@ -222,6 +239,7 @@ sub create-grid(
     }
     =end comment
 
+    #==== draw the grid
     $page.graphics: {
         .transform: :translate($llx, $lly);
 
@@ -284,6 +302,7 @@ sub run(@args) is export {
     force
     spec=X  X is user spec file
     vscale # put vert scale, default 0.5, 0 origin, inches
+           # t
     =end comment
 
     my $debug     = 0;
@@ -421,7 +440,6 @@ sub check-inputs(:$page!, :$gp!) is export {
 sub create-scale(
       :$page!,
       :$gp!,
-Scale :$scale!,
     ) is export {
     check-inputs :$page, :$gp;
 

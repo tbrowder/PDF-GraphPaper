@@ -46,7 +46,7 @@ role DefaultAttributes {
     has $.grid-origin-y is rw = 0;
 
     method update-from-file(IO::Path $ifil) {
-        for $ifil.IO.line -> $line is copy {
+        for $ifil.IO.lines -> $line is copy {
             $line = strip-comment $line;
             next unless $line ~~ /\S/;
             my @w = $line.words;
@@ -148,6 +148,7 @@ class GPaper does DefaultAttributes is export {
             # use the caller's attr values to update the class
             # instance
             my @data = read-specs-file $pdf-cnf;
+            self.update-from-file: $pdf-cnf;
         }
 
     } # end of submethod TWEAK
@@ -222,9 +223,56 @@ class GPaper does DefaultAttributes is export {
 
     } # end of method 'use-user-cnf'
 
+    # need to be able to change some attrs dynamically
+    # margins setter/getters
+    method tm($val?) {
+        if $val.defined and $val > -1 {
+            # set it
+            self.margin-t = $val;
+        }
+        else {
+            # return it
+            self.margin-t > -1 ?? self.margin-t !! self.margins;
+        }
+    }
+    method bm($val?) {
+        if $val.defined and $val > -1 {
+            # set it
+            self.margin-b = $val;
+        }
+        else {
+            # return it
+            self.margin-b > -1 ?? self.margin-b !! self.margins;
+        }
+    }
+    method lm($val?) {
+        if $val.defined and $val > -1 {
+            # set it
+            self.margin-l = $val;
+        }
+        else {
+            # return it
+            self.margin-t > -1 ?? self.margin-l !! self.margins;
+        }
+    }
+    method rm($val?) {
+        if $val.defined and $val > -1 {
+            # set it
+            self.margin-r = $val;
+        }
+        else {
+            # return it
+            self.margin-r > -1 ?? self.margin-r !! self.margins;
+        }
+    }
+
 } # end of exported class GPaper
 
-class Scale is export {
+=begin comment
+# don'use this class, but add method 'vscale' to class GPaper
+class Scale is GPaper is export {
+    # additional attrs? change attrs?
+
     has $.llx      is rw = 0;
     has $.lly      is rw = 0;
     has $.length   is rw = 0;
@@ -232,5 +280,10 @@ class Scale is export {
     has $.location is rw where * ~~ /^ :i t|b|l|r/;
 
     submethod TWEAK {
+        # defaults
+        unless $!angle.defined {
+            $!angle = 90; # vscale
+        }
     }
 }
+=end comment

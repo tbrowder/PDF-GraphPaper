@@ -18,7 +18,7 @@ DESCRIPTION
 
 **PDF::GraphPaper** is a module that allows the user to create a grid on a PDF page. It includes a binary program ('make-graph-paper') to create a single gridded PDF page on any standard ISO page size. Most users will use the 'Letter" (default) or 'A4' paper.
 
-The default user measurements are inches for page descriptions (such as margins and grid dimensions and placement) and PostScript points for font sizes and adjustments. Alternatively, the user may choose centimeters for page descriptions.
+The default user measurements are inches for page descriptions (such as margins and grid dimensions and placement) and PostScript points (72 points per inch) for font sizes and adjustments. Alternatively, the user may choose centimeters for page descriptions.
 
 Grid scales
 -----------
@@ -32,14 +32,12 @@ The scales can be added without also creating the grid. In that case, they will 
 The other way is to specify one or more scales using the `sparam` option for each desired scale. For example:
 
     sparam=L,36,36,500
-    =end code.
 
-    =head2 Overlay
+Overlay
+-------
 
-    The user may easily overlay grids or ruled lines on an existing PDF
-    document by providing its name in an option:
+The user may easily overlay grids or ruled lines on an existing PDF document by providing its name in an option:
 
-    =begin code
     pdf-in=/path/to/pdf-file
 
 Binary file `make-graph-paper`

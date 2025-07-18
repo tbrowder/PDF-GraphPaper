@@ -1,6 +1,6 @@
 use Test;
 
-my $debug = 0;
+my $debug = 1;
 
 use PDF::API6;
 use PDF::Lite;
@@ -30,13 +30,21 @@ my $page = $pdf.add-page;
 isa-ok $page, PDF::Content::Page;
 
 lives-ok {
-    # create-grid is in PDF/GraphPaper.rakumod
     create-grid :$page, :$gp; # , :debug;
 }, "test sub create-grid";
 
+lives-ok {
+    create-scale :$page, :$gp; # , :debug;
+}, "test sub create-scale";
+
 if $debug {
-   $pdf.save-as: "test2.pdf";
+   $pdf.save-as: "test3.pdf";
 }
+
+# test changing margin setting...
+$gp.tm: 6;
+is $gp.tm, 6, "set tm 6";
+is $gp.bm, $gp.margins, "check bm still default {$gp.margins}";
 
 done-testing;
 =finish

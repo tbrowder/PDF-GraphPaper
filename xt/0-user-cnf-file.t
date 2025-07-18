@@ -1,7 +1,5 @@
 use Test;
 
-my $debug = 0;
-
 use PDF::API6;
 use PDF::Lite;
 use PDF::Content::Color :ColorName, :color;
@@ -15,13 +13,10 @@ use PDF::GraphPaper::Subs;
 use PDF::GraphPaper::Vars;
 use PDF::GraphPaper::Classes;
 
-my $gp = GPaper.new;
+my $gp = GPaper.new: :margins(0);
 isa-ok $gp, GPaper;
-
-# check the default attr values
-$gp.show-spec;
-
-is $gp.margins, 36;
+is $gp.margins, 0;
+is $gp.units, "cm", "units from user's cnf file: {$gp.units}";
 
 my $pdf  = PDF::Lite.new;
 isa-ok $pdf, PDF::Lite;
@@ -29,14 +24,11 @@ isa-ok $pdf, PDF::Lite;
 my $page = $pdf.add-page;
 isa-ok $page, PDF::Content::Page;
 
+#=begin comment
 lives-ok {
-    # create-grid is in PDF/GraphPaper.rakumod
     create-grid :$page, :$gp; # , :debug;
 }, "test sub create-grid";
-
-if $debug {
-   $pdf.save-as: "test2.pdf";
-}
+#=end comment
 
 done-testing;
-=finish
+
