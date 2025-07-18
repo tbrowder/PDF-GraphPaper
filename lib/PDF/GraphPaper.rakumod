@@ -123,7 +123,8 @@ sub vscale(
     check-inputs :$page, :$gp;
 }
 
-sub create-grid(
+# formerly sub create-grid(
+sub create-graph-paper(
     # caller provides the $page to mark on
     :$page!,
     :$gp!, # the GPaper object
@@ -171,7 +172,11 @@ sub create-grid(
 
     say "DEBUG: \$max-ncells-x: {$max-ncells-x}" if $debug;
 
-    # calculate major grids from page size
+    #===================================================
+    # calculate grid data from current page values above
+    #===================================================
+
+    # major grids
     my $ngrids-x = $gp.major-grids
                    ?? floor($max-ncells-x div $gp.cells-per-grid)
                    !! 0;
@@ -179,7 +184,7 @@ sub create-grid(
                    ?? floor($max-ncells-y div $gp.cells-per-grid)
                    !! 0;
 
-    # calculate minor grids from page size
+    # minor grids
     my $ncells-x = $ngrids-x
                    ?? ($ngrids-x * $gp.cells-per-grid)
                    !! $max-ncells-x;
@@ -223,9 +228,20 @@ sub create-grid(
     my $llx = 0 + (0.5 * $page-width)  - (0.5 * $graph-width);
     my $lly = 0 + (0.5 * $page-height) - (0.5 * $graph-height);
 
-    #
-    #==== draw any scales
+    # define more page parameters to ease creating independent
+    # subroutines
+
+    my $major-grids        = $gp.major-grids;
+    my $cell-size-y        = $gp.cell-size-y;
+    my $cell-size-x        = $gp.cell-size-x;
+    my $cell-linewidth     = $gp.cell-linewidth;
+    my $mid-grid-linewidth = $gp.mid-grid-linewidth;
+    my $grid-linewidth     = $gp.grid-linewidth;
+
+
+
     =begin comment
+    #==== draw any scales
     if $vscale {
         draw-vscale $page, :$llx, :$debug;
 	
@@ -239,7 +255,16 @@ sub create-grid(
     }
     =end comment
 
-    #==== draw the grid
+    #========================
+    # draw any scales desired
+    #========================
+    # create-scales
+
+    #==============
+    # draw the grid
+    #==============
+    # create-grid
+    =begin comment
     $page.graphics: {
         .transform: :translate($llx, $lly);
 
@@ -289,7 +314,10 @@ sub create-grid(
         }
         say "DEBUG: Grid LineWidth = {$gp.cell-linewidth}" if $debug;
     }
-} # sub create-grid
+    =end comment
+
+#} # sub create-grid
+} # sub create-graph-paper
 
 sub run(@args) is export {
     say "Executing {$*PROGRAM.basename}...";
@@ -390,7 +418,8 @@ sub run(@args) is export {
         my $page = $pdf.add-page;
         my $gp = PDF::GraphPaper::Classes::GPaper.new;
         # make any changes to $gp
-        create-grid :$page, :$gp, :vscale, :$debug;
+        #create-grid :$page, :$gp, :vscale, :$debug;
+        create-graph-paper :$page, :$gp, :vscale, :$debug;
         if $ofil.IO.r {
             unless $force {
                 say "Output file '$ofil' exists...exiting";
