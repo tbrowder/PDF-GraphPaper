@@ -1,6 +1,6 @@
 use Test;
 
-my $debug = 0;
+my $debug = 1;
 
 use PDF::API6;
 use PDF::Lite;
@@ -31,8 +31,9 @@ isa-ok $page, PDF::Content::Page;
 
 lives-ok {
     # create-grid is in PDF/GraphPaper.rakumod
-    create-grid :$page, :$gp; # , :debug;
-}, "test sub create-grid";
+    #create-grid :$page, :$gp; # , :debug;
+    create-graph-paper :$page, :$gp; # , :debug;
+}, "test sub create-graph-paper";
 
 if $debug {
    $pdf.save-as: "test2.pdf";

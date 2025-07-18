@@ -30,8 +30,9 @@ my $page = $pdf.add-page;
 isa-ok $page, PDF::Content::Page;
 
 lives-ok {
-    create-grid :$page, :$gp; # , :debug;
-}, "test sub create-grid";
+    #create-grid :$page, :$gp; # , :debug;
+    create-graph-paper :$page, :$gp; # , :debug;
+}, "test sub create-graph-paper";
 
 lives-ok {
     create-scale :$page, :$gp; # , :debug;

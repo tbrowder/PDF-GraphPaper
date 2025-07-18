@@ -1,5 +1,7 @@
 use Test;
 
+my $debug = 1;
+
 use PDF::API6;
 use PDF::Lite;
 use PDF::Content::Color :ColorName, :color;
@@ -23,10 +25,13 @@ isa-ok $pdf, PDF::Lite;
 my $page = $pdf.add-page;
 isa-ok $page, PDF::Content::Page;
 
-#=begin comment
 lives-ok {
-    create-grid :$page, :$gp; # , :debug;
-}, "test sub create-grid";
-#=end comment
+    #create-grid :$page, :$gp; # , :debug;
+    create-graph-paper :$page, :$gp; # , :debug;
+}, "test sub create-graph-paper";
+
+if $debug {
+   $pdf.save-as: "test1.pdf";
+}
 
 done-testing;

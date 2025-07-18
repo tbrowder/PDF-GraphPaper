@@ -238,8 +238,6 @@ sub create-graph-paper(
     my $mid-grid-linewidth = $gp.mid-grid-linewidth;
     my $grid-linewidth     = $gp.grid-linewidth;
 
-
-
     =begin comment
     #==== draw any scales
     if $vscale {
