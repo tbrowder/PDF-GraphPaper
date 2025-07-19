@@ -29,9 +29,16 @@ With the `scale-X` options, a scale can be added for the grid at X where X is `T
 
 The scales can be added without also creating the grid. In that case, they will be placed but using the default grid corners
 
-The other way is to specify one or more scales using the `sparam` option for each desired scale. For example:
+The other way is to specify one or more scales using `SPEC=X` option where X is the name of a specification file with the desired parameters using the same `key value` format as the default specification file. For example, the contents of `SPEC=/path/t.spec` might look like:
 
-    sparam=L,36,36,500
+    paper A4 # use glossy finish
+    orientation landscape
+    units cm
+    llx 36    # always PS points (72 per inch)
+    lly 36
+    scale
+
+That input will place a vertical scale with its lower-left cor
 
 Overlay
 -------
@@ -53,11 +60,11 @@ The installed executable file, `make-graph-paper`, has the following required an
     Bool :$force=False, # allow overwriting an existing input PDF
          :$spec=X,      # where IO::Path X is a specification file
                         #   for this run
-    Bool :$show-spec,   # if True, show the default spcifications
+    Bool :$show-spec,   # if True, show the default specifications
                         #   on STDOUT
     Str  :$scale,       # if nonempty, has codes from set "tblr" for
                         #   adding one or more scales
-    Str  :$sbbox,       # llx, lly, width, height for scales and no grid
+    Str  :$sparams,     # llx, lly, width, height for scales and no grid
 
 The specification file
 ----------------------

@@ -62,14 +62,13 @@ sub create-graph-paper(
     my $page-height = $gp.page-height; #11.0 * 72;
 
     # the 4 default margins from $gp
-    =begin comment
-    # allow for custom margins for each edge
-    has $.margin-t is rw = -1; # -1 indicates not set
-    has $.margin-b is rw = -1; # -1 indicates not set
-    has $.margin-l is rw = -1; # -1 indicates not set
-    has $.margin-r is rw = -1; # -1 indicates not set
-    =end comment
+    # their default allows for custom margins for each edge
+    # has $.margin-t is rw = -1; # -1 indicates not set
+    # has $.margin-b is rw = -1; # -1 indicates not set
+    # has $.margin-l is rw = -1; # -1 indicates not set
+    # has $.margin-r is rw = -1; # -1 indicates not set
 
+    # define the current margins
     my ($Tm, $Bm, $Lm, $Rm);
     $Tm = $gp.margin-t > -1 ?? $gp.margin-t !! $gp.margins;
     $Bm = $gp.margin-b > -1 ?? $gp.margin-b !! $gp.margins;
@@ -140,6 +139,7 @@ sub create-graph-paper(
     }
 
     # Calculate the desired lower-left corner of the grid area
+    # (which also defines the "base" lines for any scales)
     my $mid-point-x = 0.5 * $graph-width;
     my $mid-point-y = 0.5 * $graph-height;
 
@@ -172,7 +172,8 @@ sub create-graph-paper(
     # draw the grid
     #==============
     # create-grid
-    unless $vscale {
+    if not $vscale {
+        # otherwise, we skip creating the grid and finish the page
         create-grid :$page, :$gp, :$LLX, :$LLY;
     }
 
@@ -399,6 +400,7 @@ sub help is export {
       force      - Allows overwriting an existing file
       spec=X     - Where X is a specification file name
       vscale     - Creates a vertical scale at the left
-                     of a page with X=0.5in and Y=0in
+                     of a page with default X=0.5in and Y=0in
+    
     HERE
 }
