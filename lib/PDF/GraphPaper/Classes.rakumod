@@ -11,7 +11,7 @@ role DefaultAttributes {
     has $.orientation is rw = "portrait"; # default
     #=========================
     #== defaults for Letter paper
-    has $.margins is rw       = 0.5 * 72;
+    has $.margins is rw       = 72;
     # allow for custom margins for each edge
     has $.margin-t is rw = -1; # -1 indicates not set
     has $.margin-b is rw = -1; # -1 indicates not set

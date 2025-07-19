@@ -21,7 +21,7 @@ isa-ok $gp, GPaper;
 # check the default attr values
 $gp.show-spec;
 
-is $gp.margins, 36;
+is $gp.margins, 72;
 
 my $pdf  = PDF::Lite.new;
 isa-ok $pdf, PDF::Lite;

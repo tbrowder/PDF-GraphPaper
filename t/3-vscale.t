@@ -21,7 +21,7 @@ isa-ok $gp, GPaper;
 # check the default attr values
 $gp.show-spec;
 
-is $gp.margins, 36;
+is $gp.margins, 72;
 
 my $pdf  = PDF::Lite.new;
 isa-ok $pdf, PDF::Lite;
@@ -35,8 +35,8 @@ lives-ok {
 }, "test sub create-graph-paper";
 
 lives-ok {
-    create-scale :$page, :$gp; # , :debug;
-}, "test sub create-scale";
+    create-scales :$page, :$gp :LLX(36), :LLY(36); # , :debug;
+}, "test sub create-scales";
 
 if $debug {
    $pdf.save-as: "test3.pdf";

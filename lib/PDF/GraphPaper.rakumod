@@ -46,7 +46,7 @@ sub create-graph-paper(
     :$gp!, # the GPaper object
     :$code = "Letter", # paper type
     :$vscale = False,  # pass to the appropriate called subs
-    :$scales = True,   # default
+    :$scales = False,  # default
     :$debug,
     ) is export {
 
@@ -143,7 +143,7 @@ sub create-graph-paper(
     my $mid-point-x = 0.5 * $graph-width;
     my $mid-point-y = 0.5 * $graph-height;
 
-    # THESE TWO POINTS MUST BE PASSED TO THE TWO USING SUBD
+    # THESE TWO POINTS MUST BE PASSED TO THE TWO USING SUBS
     my $LLX = 0 + (0.5 * $page-width)  - (0.5 * $graph-width);
     my $LLY = 0 + (0.5 * $page-height) - (0.5 * $graph-height);
 
@@ -235,6 +235,7 @@ sub create-grid(
       :$gp!,
       :$LLX!,
       :$LLY!,
+      :$debug,
     ) is export {
     check-inputs :$page, :$gp;
 
@@ -252,6 +253,7 @@ sub create-scales(
       :$LLX!,
       :$LLY!,
       :$vscale = False,
+      :$debug,
     ) is export {
     check-inputs :$page, :$gp;
 
