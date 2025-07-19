@@ -13,94 +13,21 @@ use PDF::GraphPaper::Vars;
 use PDF::GraphPaper::Subs;
 use PDF::GraphPaper::Classes;
 
-# moved to Vars.rakumod
-#my $pdf-cnf = "{%*ENV<HOME>}/pdf-graphpaper.cnf".IO // "";
-sub show-paper-sizes(
-    :$debug,
-    --> List
-) is export {
-    say "Known paper sizes (PS points):";
-    my %h;
-    for PageSizes.kv -> $k, $v {
-        say "$k, $v" if $debug;
-        %h{$k} = [$v];
-    }
-    for %h.keys.sort -> $k {
-        my $v = %h{$k};
-        say "  $k: $v";
-    }
-}
-
-sub get-paper-dimens(
-    $code is copy where $code ~~ /:i
-        letter | legal | a0 | a1 | a2 | a3 | a4 | a5 | b4 | b5 |
-        executive | ledger | folio | quarto | statement | tabloid
-        /;
-    :$debug,
-    --> List
-    ) is export {
-
-    #--> List # llx, lly, urx, ury (PS points)
-    with $code {
-        when /letter/ { 0, 0, 0, 0 };
-        when /legal/ { 0, 0, 0, 0 };
-        when /a0/  { 0, 0, 0, 0 };
-        when /a1/ { 0, 0, 0, 0 };
-        when /a2/ { 0, 0, 0, 0 };
-        when /a3/   { 0, 0, 0, 0 };
-        when /a4/   { 0, 0, 0, 0 };
-        when /a5/   { 0, 0, 0, 0 };
-        when /b4/   { 0, 0, 0, 0 };
-        when /b5/  { 0, 0, 0, 0 };
-        when /executive/   { 0, 0, 0, 0 };
-        when /ledger/   { 0, 0, 0, 0 };
-        when /folio/   { 0, 0, 0, 0 };
-        when /quarto/   { 0, 0, 0, 0 };
-        when /statement/   { 0, 0, 0, 0 };
-        when /tabloid/ { 0, 0, 0, 0 };
-
-        default { 0, 0, 0, 0 };
-    }
-
-    my %h;
-    $code .= tc;
-    for PageSizes.kv -> $k, $v {
-        say "$k, $v" if $debug;
-        %h{$k} = [$v];
-    }
-    for %h.keys.sort -> $k {
-        my $v = %h{$k};
-        say "  $k: $v" if $debug;
-    }
-    my $size;
-    if %h{$code}:exists {
-        $size = %h{$code};
-        say "Paper code '$code' size (PS points):" if $debug;
-        say "  $size" if $debug;
-    }
-    else {
-        $size = "Unrecognized paper code '$code'";
-        say "unrecognized paper code '$code'" if $debug;
-    }
-    for PageSizes.kv -> $k, $v {
-        say "$k, $v" if $debug;
-    }
-    $size;
-} # get-paper-dimens
-
-sub deg2rad($degrees) is export {
-    $degrees * pi / 180
-}
-
-sub rad2deg($radians) is export {
-    $radians * 180 / pi
-}
-
 sub show-spec(
     :$debug,
     ) is export {
     my $gp = GPaper.new;
     $gp.show-spec :$debug;
+}
+
+sub check-inputs(:$page!, :$gp!) is export {
+    unless $page ~~ PDF::Content::Page {
+        die "FATAL: \$page is NOT a PDF::Content::Page";
+    }
+    unless $gp ~~ PDF::GraphPaper::Classes::GPaper {
+        die "FATAL: \$gp is NOT a PDF::GraphPaper::Classes::GPaper";
+    }
+
 }
 
 sub text-line(
@@ -113,6 +40,20 @@ sub text-line(
     check-inputs :$page, :$gp;
 }
 
+sub create-grid(
+      :$page!,
+      :$gp!,
+    ) is export {
+    check-inputs :$page, :$gp;
+
+    # for horizontal scales
+        # for top numbers and tick marks
+        # for bottom numbers and tick marks
+    # for vertical scales
+        # for left side numbers and tick marks
+        # for right side numbers and tick marks
+}
+
 sub vscale(
     # caller provides the $page to mark on
     :$page!,
@@ -121,6 +62,20 @@ sub vscale(
     :$debug,
     ) is export {
     check-inputs :$page, :$gp;
+}
+
+sub create-scales(
+      :$page!,
+      :$gp!,
+    ) is export {
+    check-inputs :$page, :$gp;
+
+    # for horizontal scales
+        # for top numbers and tick marks
+        # for bottom numbers and tick marks
+    # for vertical scales
+        # for left side numbers and tick marks
+        # for right side numbers and tick marks
 }
 
 # formerly sub create-grid(
@@ -140,7 +95,7 @@ sub create-graph-paper(
     # orientation, cell-size, and  margins.
     #===============================================================
     # defaults (with limited user inputs via the $gp object for now):
-    my $page-width  = $gp.page-width; #  8.5 * 72; 
+    my $page-width  = $gp.page-width; #  8.5 * 72;
     my $page-height = $gp.page-height; #11.0 * 72;
 
     # the 4 default margins from $gp
@@ -242,26 +197,31 @@ sub create-graph-paper(
     #==== draw any scales
     if $vscale {
         draw-vscale $page, :$llx, :$debug;
-	
+
         # finished with this page
         return;
     }
     elsif $handle-point {
-	
+
         # finished with this page
         return;
     }
     =end comment
 
+    =begin comment
     #========================
     # draw any scales desired
     #========================
     # create-scales
+    create-scales :$page;
 
     #==============
     # draw the grid
     #==============
     # create-grid
+    create-grid :$page;
+    =end comment
+
     =begin comment
     $page.graphics: {
         .transform: :translate($llx, $lly);
@@ -399,7 +359,7 @@ sub run(@args) is export {
         else {
             # creates a pdf file and calls sub create-grid with it
             say "Creating a graph...";
-        }  
+        }
         say "Creating output file '$ofil'...";
     }
     elsif $force {
@@ -417,7 +377,7 @@ sub run(@args) is export {
         my $gp = PDF::GraphPaper::Classes::GPaper.new;
         # make any changes to $gp
         #create-grid :$page, :$gp, :vscale, :$debug;
-        create-graph-paper :$page, :$gp, :vscale, :$debug;
+        create-graph-paper :$page, :$gp, :$debug;
         if $ofil.IO.r {
             unless $force {
                 say "Output file '$ofil' exists...exiting";
@@ -454,27 +414,3 @@ sub help is export {
                      of a page with X=0.5in and Y=0in
     HERE
 }
-
-sub check-inputs(:$page!, :$gp!) is export {
-    unless $page ~~ PDF::Content::Page {
-        die "FATAL: \$page is NOT a PDF::Content::Page";
-    }
-    unless $gp ~~ PDF::GraphPaper::Classes::GPaper {
-        die "FATAL: \$gp is NOT a PDF::GraphPaper::Classes::GPaper";
-    }
-}
-
-sub create-scale(
-      :$page!,
-      :$gp!,
-    ) is export {
-    check-inputs :$page, :$gp;
-
-    # for horizontal scales
-        # for top numbers and tick marks
-        # for bottom numbers and tick marks
-    # for vertical scales
-        # for left side numbers and tick marks
-        # for right side numbers and tick marks
-}
-

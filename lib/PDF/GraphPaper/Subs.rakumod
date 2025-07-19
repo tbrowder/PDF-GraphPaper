@@ -1,10 +1,20 @@
 unit module PDF::GraphPaper::Subs;
 
+use MacOS::NativeLib "*";
+use PDF::API6;
+use PDF::Lite;
+use PDF::Content::Color :ColorName, :color;
+use PDF::Content::XObject;
+use PDF::Tags;
+use PDF::Content::Text::Box;
+use PDF::Content::Page :PageSizes;
+
 use Text::Utils :ALL;
+
 use PDF::GraphPaper::Vars;
 
 sub read-specs-file(
-    IO::Path $fil, 
+    IO::Path $fil,
     --> Array) is export {
     # reads class attr data from an external file
     # to set changed attrs
@@ -24,8 +34,17 @@ sub is-odd(Int $num --> Bool) is export {
     False
 }
 
+sub deg2rad($degrees) is export {
+    $degrees * pi / 180
+}
+
+sub rad2deg($radians) is export {
+    $radians * 180 / pi
+}
+
+
 sub create-spec-file(
-    $ofil?, 
+    $ofil?,
     :$debug
     ) is export {
 }
@@ -35,4 +54,80 @@ sub create-gridded-file(
     $ofil?,
     :$debug,
     ) is export {
+}
+
+sub get-paper-dimens(
+    $code is copy where $code ~~ /:i
+        letter | legal | a0 | a1 | a2 | a3 | a4 | a5 | b4 | b5 |
+        executive | ledger | folio | quarto | statement | tabloid
+        /;
+    :$debug,
+    --> List
+    ) is export {
+
+    #--> List # llx, lly, urx, ury (PS points)
+    with $code {
+        when /letter/ { 0, 0, 0, 0 };
+        when /legal/ { 0, 0, 0, 0 };
+        when /a0/  { 0, 0, 0, 0 };
+        when /a1/ { 0, 0, 0, 0 };
+        when /a2/ { 0, 0, 0, 0 };
+        when /a3/   { 0, 0, 0, 0 };
+        when /a4/   { 0, 0, 0, 0 };
+        when /a5/   { 0, 0, 0, 0 };
+        when /b4/   { 0, 0, 0, 0 };
+        when /b5/  { 0, 0, 0, 0 };
+        when /executive/   { 0, 0, 0, 0 };
+        when /ledger/   { 0, 0, 0, 0 };
+        when /folio/   { 0, 0, 0, 0 };
+        when /quarto/   { 0, 0, 0, 0 };
+        when /statement/   { 0, 0, 0, 0 };
+        when /tabloid/ { 0, 0, 0, 0 };
+
+        default { 0, 0, 0, 0 };
+    }
+
+    my %h;
+    $code .= tc;
+    for PageSizes.kv -> $k, $v {
+        say "$k, $v" if $debug;
+        %h{$k} = [$v];
+    }
+    for %h.keys.sort -> $k {
+        my $v = %h{$k};
+        say "  $k: $v" if $debug;
+    }
+    my $size;
+    if %h{$code}:exists {
+        $size = %h{$code};
+        say "Paper code '$code' size (PS points):" if $debug;
+        say "  $size" if $debug;
+    }
+    else {
+        $size = "Unrecognized paper code '$code'";
+        say "unrecognized paper code '$code'" if $debug;
+    }
+    for PageSizes.kv -> $k, $v {
+        say "$k, $v" if $debug;
+    }
+    $size;
+} # get-paper-dimens
+
+
+# moved to Vars.rakumod
+#my $pdf-cnf = "{%*ENV<HOME>}/pdf-graphpaper.cnf".IO // "";
+sub show-paper-sizes(
+    :$debug,
+    --> List
+) is export {
+    say "Known paper sizes (PS points):";
+    my %h;
+    for PageSizes.kv -> $k, $v {
+        say "$k, $v" if $debug;
+        %h{$k} = [$v];
+    }
+    for %h.keys.sort -> $k {
+        my $v = %h{$k};
+        say "  $k: $v";
+    }
 }

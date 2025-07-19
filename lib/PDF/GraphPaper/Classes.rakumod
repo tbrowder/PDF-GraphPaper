@@ -51,17 +51,17 @@ role DefaultAttributes {
             next unless $line ~~ /\S/;
             my @w = $line.words;
             my $nw = @w.elems;
-            unless $nw == 2 { 
+            unless $nw == 2 {
                 die "FATAL: Expected 2 words but got $nw";
             }
             my $k = @w.shift;
             my $v = @w.shift;
             with $k {
                 # when x { $!x = $v }
-                when "units" { 
+                when "units" {
                     $!units = $v } #               in
                 #=begin comment
-                when "media" { 
+                when "media" {
                     $!media = $v } #               letter
                 when "orientation" {
                     $!orientation = $v } #    portrait
@@ -95,11 +95,11 @@ role DefaultAttributes {
                     $!mid-grid-linewidth   = $v.Numeric } #0.75
                 when "grid-linewidth" {
                     $!grid-linewidth   = $v.Numeric } #1.4
-                when "scale-t" { 
+                when "scale-t" {
                     $!scale-t  = $v.Numeric } #0
-                when "scale-b" { 
+                when "scale-b" {
                     $!scale-b  = $v.Numeric } #0
-                when "scale-l" { 
+                when "scale-l" {
                     $!scale-l  = $v.Numeric } #0
                 when "scale-r" {
                     $!scale-r   = $v.Numeric } #0
@@ -108,7 +108,7 @@ role DefaultAttributes {
                 when "grid-origin-y" {
                     $!grid-origin-y   = $v.Numeric } #0
                 #=end comment
-                
+
                 default { warn "WARNING: Unknown attribute '$_'" }
             }
         }
@@ -206,15 +206,15 @@ class GPaper does DefaultAttributes is export {
         =begin comment
         # from doc search for "set_value"
         # method set_value(Mu $obj, Mu \new_val)
-        #   Binds the value 'new_val' to this attribute of 
+        #   Binds the value 'new_val' to this attribute of
         #     object $obj.
         class A {
             has $!a = 5;
             method speak() { say $!a; }
         }
-        # in line below, [0] is the first attr in the class 
+        # in line below, [0] is the first attr in the class
         #   definition
-        my $attr = A.^attributes(:local)[0]; 
+        my $attr = A.^attributes(:local)[0];
         my $a = A.new;
         $a.speak; # OUTPUT: «5␤»
         $attr.set_value($a, 42);
@@ -269,7 +269,7 @@ class GPaper does DefaultAttributes is export {
 } # end of exported class GPaper
 
 =begin comment
-# don'use this class, but add method 'vscale' to class GPaper
+# don't use this class, but add method 'vscale' to class GPaper?
 class Scale is GPaper is export {
     # additional attrs? change attrs?
 
