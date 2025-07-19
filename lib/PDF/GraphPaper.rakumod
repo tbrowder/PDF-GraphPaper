@@ -40,50 +40,13 @@ sub text-line(
     check-inputs :$page, :$gp;
 }
 
-sub create-grid(
-      :$page!,
-      :$gp!,
-    ) is export {
-    check-inputs :$page, :$gp;
-
-    # for horizontal scales
-        # for top numbers and tick marks
-        # for bottom numbers and tick marks
-    # for vertical scales
-        # for left side numbers and tick marks
-        # for right side numbers and tick marks
-}
-
-sub vscale(
-    # caller provides the $page to mark on
-    :$page!,
-    :$gp!, # the GPaper obj
-    :$code = "Letter", # paper type
-    :$debug,
-    ) is export {
-    check-inputs :$page, :$gp;
-}
-
-sub create-scales(
-      :$page!,
-      :$gp!,
-    ) is export {
-    check-inputs :$page, :$gp;
-
-    # for horizontal scales
-        # for top numbers and tick marks
-        # for bottom numbers and tick marks
-    # for vertical scales
-        # for left side numbers and tick marks
-        # for right side numbers and tick marks
-}
-
-# formerly sub create-grid(
 sub create-graph-paper(
     # caller provides the $page to mark on
     :$page!,
     :$gp!, # the GPaper object
     :$code = "Letter", # paper type
+    :$vscale = False,  # pass to the appropriate called subs
+    :$scales = True,   # default
     :$debug,
     ) is export {
 
@@ -176,12 +139,13 @@ sub create-graph-paper(
         HERE
     }
 
-    # Translate to the lower-left corner of the grid area
+    # Calculate the desired lower-left corner of the grid area
     my $mid-point-x = 0.5 * $graph-width;
     my $mid-point-y = 0.5 * $graph-height;
 
-    my $llx = 0 + (0.5 * $page-width)  - (0.5 * $graph-width);
-    my $lly = 0 + (0.5 * $page-height) - (0.5 * $graph-height);
+    # THESE TWO POINTS MUST BE PASSED TO THE TWO USING SUBD
+    my $LLX = 0 + (0.5 * $page-width)  - (0.5 * $graph-width);
+    my $LLY = 0 + (0.5 * $page-height) - (0.5 * $graph-height);
 
     # define more page parameters to ease creating independent
     # subroutines
@@ -193,34 +157,24 @@ sub create-graph-paper(
     my $mid-grid-linewidth = $gp.mid-grid-linewidth;
     my $grid-linewidth     = $gp.grid-linewidth;
 
-    =begin comment
-    #==== draw any scales
-    if $vscale {
-        draw-vscale $page, :$llx, :$debug;
+    # if $vscale is True, draw just the vertical scale with
+    # left margin as desired
 
-        # finished with this page
-        return;
-    }
-    elsif $handle-point {
-
-        # finished with this page
-        return;
-    }
-    =end comment
-
-    =begin comment
     #========================
     # draw any scales desired
     #========================
     # create-scales
-    create-scales :$page;
+    if $scales or $vscale {
+        create-scales :$page, :$gp, :$LLX, :$LLY, :$vscale;
+    }
 
     #==============
     # draw the grid
     #==============
     # create-grid
-    create-grid :$page;
-    =end comment
+    unless $vscale {
+        create-grid :$page, :$gp, :$LLX, :$LLY;
+    }
 
     =begin comment
     $page.graphics: {
@@ -274,8 +228,40 @@ sub create-graph-paper(
     }
     =end comment
 
-#} # sub create-grid
 } # sub create-graph-paper
+
+sub create-grid(
+      :$page!,
+      :$gp!,
+      :$LLX!,
+      :$LLY!,
+    ) is export {
+    check-inputs :$page, :$gp;
+
+    # for horizontal scales
+        # for top numbers and tick marks
+        # for bottom numbers and tick marks
+    # for vertical scales
+        # for left side numbers and tick marks
+        # for right side numbers and tick marks
+}
+
+sub create-scales(
+      :$page!,
+      :$gp!, # the GPaper obj
+      :$LLX!,
+      :$LLY!,
+      :$vscale = False,
+    ) is export {
+    check-inputs :$page, :$gp;
+
+    # for horizontal scales
+        # for top numbers and tick marks
+        # for bottom numbers and tick marks
+    # for vertical scales
+        # for left side numbers and tick marks
+        # for right side numbers and tick marks
+}
 
 sub run(@args) is export {
     say "Executing {$*PROGRAM.basename}...";
