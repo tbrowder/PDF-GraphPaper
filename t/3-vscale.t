@@ -30,19 +30,22 @@ my $page = $pdf.add-page;
 isa-ok $page, PDF::Content::Page;
 
 lives-ok {
-    #create-grid :$page, :$gp; # , :debug;
     create-graph-paper :$page, :$gp; # , :debug;
 }, "test sub create-graph-paper";
 
 lives-ok {
-    create-scales :$page, :$gp :LLX(36), :LLY(36); # , :debug;
+    my $SD = SData.new;
+    my $GD = GData.new;
+    my ($LLX, $LLY) = 72, 72;
+    my $vscale = False;
+    create-scales :$page, :$gp, :$GD, :$SD, :$LLX, :$LLY, :$vscale;
 }, "test sub create-scales";
 
 if $debug {
    $pdf.save-as: "test3.pdf";
 }
 
-# test changing margin setting...
+# test changing margin settings...
 $gp.tm: 6;
 is $gp.tm, 6, "set tm 6";
 is $gp.bm, $gp.margins, "check bm still default {$gp.margins}";

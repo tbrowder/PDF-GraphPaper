@@ -1,9 +1,13 @@
+see PDF::FormFill for the GBUMC 3-page form to fill
+  bash alias: cdpo # what?
+
 Add reading user's spec in TWEAK
 
 Add classes
   * = done
-   Scale
-  *GPaper
+   SData
+   GData
+  *GPaper mostly immutable
 
 Fix all modes and options:
   * = done

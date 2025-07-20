@@ -268,9 +268,7 @@ class GPaper does DefaultAttributes is export {
 
 } # end of exported class GPaper
 
-=begin comment
-# don't use this class, but add method 'vscale' to class GPaper?
-class Scale is GPaper is export {
+class SData is export {
     # additional attrs? change attrs?
 
     has $.llx      is rw = 0;
@@ -286,4 +284,3 @@ class Scale is GPaper is export {
         }
     }
 }
-=end comment

@@ -34,17 +34,19 @@ sub text-line(
     # caller provides the $page to mark on
     :$page!,
     :$gp!, # the GPaper object
-    :$code = "Letter", # paper type
+    :$media = "Letter", # paper type
     :$debug,
     ) is export {
     check-inputs :$page, :$gp;
 }
 
 sub create-graph-paper(
+    # the main calling sub
+    #   calls subs 'create-scales' and 'create-grid', as required
     # caller provides the $page to mark on
     :$page!,
     :$gp!, # the GPaper object
-    :$code = "Letter", # paper type
+    :$media = "Letter", # paper type
     :$vscale = False,  # pass to the appropriate called subs
     :$scales = False,  # default
     :$debug,
@@ -150,13 +152,35 @@ sub create-graph-paper(
     # define more page parameters to ease creating independent
     # subroutines
 
-    my $major-grids        = $gp.major-grids;
-    my $cell-size-y        = $gp.cell-size-y;
-    my $cell-size-x        = $gp.cell-size-x;
-    my $cell-linewidth     = $gp.cell-linewidth;
-    my $mid-grid-linewidth = $gp.mid-grid-linewidth;
-    my $grid-linewidth     = $gp.grid-linewidth;
+    #=begin comment
+    # this definition can be moved to ::Classes
+    class GData is export {
+        has $.ncells-x           is rw;
+        has $.ncells-y           is rw;
+        has $.major-grids        is rw;
+        has $.cell-size-y        is rw;
+        has $.cell-size-x        is rw;
+        has $.cell-linewidth     is rw;
+        has $.mid-grid-linewidth is rw;
+        has $.grid-linewidth     is rw;
+        has $.graph-width        is rw;
+        has $.graph-height       is rw;
+    }
+    #=end comment
 
+    my $GD = GData.new(
+        :ncells-x($ncells-x),
+        :ncells-y($ncells-y),
+        :major-grids($gp.major-grids),
+        :cell-size-y($gp.cell-size-y),
+        :cell-size-x($gp.cell-size-x),
+        :cell-linewidth($gp.cell-linewidth),
+        :mid-grid-linewidth($gp.mid-grid-linewidth),
+        :grid-linewidth($gp.grid-linewidth),
+        :graph-width($graph-width),
+        :graph-height($graph-height),
+    );
+    
     # if $vscale is True, draw just the vertical scale with
     # left margin as desired
 
@@ -165,7 +189,8 @@ sub create-graph-paper(
     #========================
     # create-scales
     if $scales or $vscale {
-        create-scales :$page, :$gp, :$LLX, :$LLY, :$vscale;
+        my $SD = SData.new;
+        create-scales :$page, :$gp, :$GD, :$SD, :$LLX, :$LLY, :$vscale;
     }
 
     #==============
@@ -174,16 +199,34 @@ sub create-graph-paper(
     # create-grid
     if not $vscale {
         # otherwise, we skip creating the grid and finish the page
-        create-grid :$page, :$gp, :$LLX, :$LLY;
+        create-grid :$page, :$gp, :$GD, :$LLX, :$LLY;
     }
 
-    =begin comment
+} # sub create-graph-paper
+
+sub create-grid(
+      :$page!,
+      :$gp!,
+      :$GD!,
+      :$LLX!,
+      :$LLY!,
+      :$debug,
+    ) is export {
+    check-inputs :$page, :$gp;
+
+    # for horizontal scales
+        # for top numbers and tick marks
+        # for bottom numbers and tick marks
+    # for vertical scales
+        # for left side numbers and tick marks
+        # for right side numbers and tick marks
+
     $page.graphics: {
-        .transform: :translate($llx, $lly);
+        .transform: :translate($LLX, $LLY);
 
         # draw horizontal lines, $y is varying 0 to $twidth
         #   bottom to top
-        for 0..$ncells-y -> $i {
+        for 0..$GD.ncells-y -> $i {
             my $y = $i * $gp.cell-size-y;
             if not $gp.major-grids {
                 .LineWidth = $gp.cell-linewidth;
@@ -198,15 +241,15 @@ sub create-graph-paper(
                 .LineWidth = $gp.cell-linewidth;
             }
             # HORIZONTAL line
-            .MoveTo: 0,            $y;
-            .LineTo: $graph-width, $y;
+            .MoveTo: 0,               $y;
+            .LineTo: $GD.graph-width, $y;
             .Stroke;
         }
         say "DEBUG: Grid LineWidth = {$gp.cell-linewidth}" if $debug;
 
         # draw vertical lines, $x is varying 0 to $twidth
         #   left to right
-        for 0..$ncells-x -> $i {
+        for 0..$GD.ncells-x -> $i {
             my $x = $i * $gp.cell-size-x;
             if not $gp.major-grids {
                 .LineWidth = $gp.cell-linewidth;
@@ -222,35 +265,18 @@ sub create-graph-paper(
             }
             # VERTICAL line
             .MoveTo: $x, 0;
-            .LineTo: $x, $graph-height;
+            .LineTo: $x, $GD.graph-height;
             .Stroke;
         }
         say "DEBUG: Grid LineWidth = {$gp.cell-linewidth}" if $debug;
     }
-    =end comment
-
-} # sub create-graph-paper
-
-sub create-grid(
-      :$page!,
-      :$gp!,
-      :$LLX!,
-      :$LLY!,
-      :$debug,
-    ) is export {
-    check-inputs :$page, :$gp;
-
-    # for horizontal scales
-        # for top numbers and tick marks
-        # for bottom numbers and tick marks
-    # for vertical scales
-        # for left side numbers and tick marks
-        # for right side numbers and tick marks
 }
 
 sub create-scales(
       :$page!,
       :$gp!, # the GPaper obj
+      :$GD!, # the GData  obj
+      :$SD!, # the SData  obj
       :$LLX!,
       :$LLY!,
       :$vscale = False,
@@ -401,6 +427,6 @@ sub help is export {
       spec=X     - Where X is a specification file name
       vscale     - Creates a vertical scale at the left
                      of a page with default X=0.5in and Y=0in
-    
+
     HERE
 }

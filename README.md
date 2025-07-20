@@ -27,11 +27,11 @@ The default is not to add a scale. If added, the scales are added with numbers i
 
 With the `scale-X` options, a scale can be added for the grid at X where X is `T`, `B`, `L`, or `R` for the grid's top, bottom, left, or right edge, respectively. The real effect of the "position" letter is to (1) specify its direction and (2) to specify which side of the ruled line the numbers and tick marks appear. The "top" and "bottom" scales are parallel to those edges of the paper while "left" and "right" scales are parallel to those edges.
 
-The scales can be added without also creating the grid. In that case, they will be placed but using the default grid corners
+The scales can be added without also creating the grid. In that case, they will be placed but using the default or user-defined grid corners.
 
 The other way is to specify one or more scales using `SPEC=X` option where X is the name of a specification file with the desired parameters using the same `key value` format as the default specification file. For example, the contents of `SPEC=/path/t.spec` might look like:
 
-    paper A4 # use glossy finish
+    media A4 # use glossy finish
     orientation landscape
     units cm
     llx 36    # always PS points (72 per inch)

@@ -24,10 +24,30 @@ isa-ok $pdf, PDF::Lite;
 my $page = $pdf.add-page;
 isa-ok $page, PDF::Content::Page;
 
-#=begin comment
 lives-ok {
-    create-grid :$page, :$gp, :LLX(72), :LLY(72); # , :debug;
-}, "test sub create-grid";
-#=end comment
+    create-graph-paper :$page, :$gp; # , :debug;
+}, "test sub create-graph-paper";
+
+lives-ok {
+    create-graph-paper :$page, :$gp, :scales(True); # , :debug;
+}, "test sub create-graph-paper with scales";
+
+lives-ok {
+    create-graph-paper :$page, :$gp, :vscale(True); # , :debug;
+}, "test sub create-graph-paper with vscale";
+
+my $gd = GData.new;
+isa-ok $gd, GData;
+
+my $sd = SData.new;
+isa-ok $sd, SData;
+
+done-testing;
+=finish
+
+$gp = GPaper.new: :scales(True);
+isa-ok $gp, GPaper;
+is $gp.margins, 72, "margins 72";
+is $gp.scales, True, "has scales";
 
 done-testing;
