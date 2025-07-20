@@ -20,14 +20,27 @@ sub show-spec(
     $gp.show-spec :$debug;
 }
 
-sub check-inputs(:$page!, :$gp!) is export {
+sub check-inputs(:$page!, :$gp!, :$GD, :$SD, :$debug) is export {
     unless $page ~~ PDF::Content::Page {
         die "FATAL: \$page is NOT a PDF::Content::Page";
     }
     unless $gp ~~ PDF::GraphPaper::Classes::GPaper {
         die "FATAL: \$gp is NOT a PDF::GraphPaper::Classes::GPaper";
     }
-
+    my $err = 0;
+    if $GD.defined and $GD !~~ PDF::GraphPaper::Classes::GData {
+        ++$err;
+        note "FATAL: \$GD is NOT a PDF::GraphPaper::Classes::GData";
+    }
+    if $SD.defined and $SD !~~ PDF::GraphPaper::Classes::SData {
+        ++$err;
+        note "FATAL: \$SD is NOT a PDF::GraphPaper::Classes::SData";
+    }
+    if $err {
+        my $s = $err > 1 ?? "s" !! "";
+        note "        exiting with $err fatal error$s";
+        exit;
+    }
 }
 
 sub text-line(
@@ -151,23 +164,6 @@ sub create-graph-paper(
 
     # define more page parameters to ease creating independent
     # subroutines
-
-    #=begin comment
-    # this definition can be moved to ::Classes
-    class GData is export {
-        has $.ncells-x           is rw;
-        has $.ncells-y           is rw;
-        has $.major-grids        is rw;
-        has $.cell-size-y        is rw;
-        has $.cell-size-x        is rw;
-        has $.cell-linewidth     is rw;
-        has $.mid-grid-linewidth is rw;
-        has $.grid-linewidth     is rw;
-        has $.graph-width        is rw;
-        has $.graph-height       is rw;
-    }
-    #=end comment
-
     my $GD = GData.new(
         :ncells-x($ncells-x),
         :ncells-y($ncells-y),
@@ -273,16 +269,16 @@ sub create-grid(
 }
 
 sub create-scales(
-      :$page!,
-      :$gp!, # the GPaper obj
-      :$GD!, # the GData  obj
-      :$SD!, # the SData  obj
-      :$LLX!,
-      :$LLY!,
-      :$vscale = False,
-      :$debug,
+    :$page!,
+    :$gp!, # the GPaper obj
+    :$GD!, # the GData  obj
+    :$SD!, # the SData  obj
+    :$LLX!,
+    :$LLY!,
+    :$vscale = False,
+    :$debug,
     ) is export {
-    check-inputs :$page, :$gp;
+    check-inputs :$page, :$gp, :$GD, :$SD;
 
     # for horizontal scales
         # for top numbers and tick marks
@@ -290,6 +286,61 @@ sub create-scales(
     # for vertical scales
         # for left side numbers and tick marks
         # for right side numbers and tick marks
+
+    # get all dimens necessary so we can 
+    # use subs without the $gp, $GD, or $SD objects   
+    $page.graphics: {
+        # always start at the bottom left
+        .transform: :translate($LLX, $LLY);
+
+        # then we go to the appropriate sub and translate
+        # as needed for that scale
+        # where we start depends on which side we are doing
+
+        if $vscale {
+#           create-left-scale
+            # then quit
+        }
+        # left
+        if $GD.margins or $GD.margin-l > -1 { 
+#           create-left-scale
+        }
+        # right
+        if $GD.margins or $GD.margin-r > -1 {
+#           create-right-scale
+        }
+        # top
+        if $GD.margins or $GD.margin-t > -1 {
+#           create-top-scale
+        }
+        # bottom
+        if $GD.margins or $GD.margin-b > -1 {
+#           create-bottom-scale
+        }
+
+        =begin comment
+        #   left to right
+        for 0..$GD.ncells-x -> $i {
+            my $x = $i * $gp.cell-size-x;
+            if not $gp.major-grids {
+                .LineWidth = $gp.cell-linewidth;
+            }
+            elsif not $i mod 10 {
+                .LineWidth = $gp.grid-linewidth;
+            }
+            elsif not $i mod 5 {
+                .LineWidth = $gp.mid-grid-linewidth;
+            }
+            else {
+                .LineWidth = $gp.cell-linewidth;
+            }
+            # VERTICAL line
+            .MoveTo: $x, 0;
+            .LineTo: $x, $GD.graph-height;
+            .Stroke;
+        }
+        =end comment
+    }
 }
 
 sub run(@args) is export {

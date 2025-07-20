@@ -131,3 +131,28 @@ sub show-paper-sizes(
         say "  $k: $v";
     }
 }
+
+sub create-left-scale(
+    :$page!,
+    :$debug,
+    ) is export {
+} # end of sub
+
+sub create-right-scale(
+    :$page!,
+    :$debug,
+    ) is export {
+} # end of sub
+
+sub create-top-scale(
+    :$page!,
+    :$debug,
+    ) is export {
+} # end of sub
+
+sub create-bottom-scale(
+    :$page!,
+    :$debug,
+    ) is export {
+} # end of sub
+

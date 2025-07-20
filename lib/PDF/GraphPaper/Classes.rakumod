@@ -268,6 +268,19 @@ class GPaper does DefaultAttributes is export {
 
 } # end of exported class GPaper
 
+class GData is export {
+    has $.ncells-x           is rw;
+    has $.ncells-y           is rw;
+    has $.major-grids        is rw;
+    has $.cell-size-y        is rw;
+    has $.cell-size-x        is rw;
+    has $.cell-linewidth     is rw;
+    has $.mid-grid-linewidth is rw;
+    has $.grid-linewidth     is rw;
+    has $.graph-width        is rw;
+    has $.graph-height       is rw;
+} # end of exported class GData
+
 class SData is export {
     # additional attrs? change attrs?
 
@@ -283,4 +296,13 @@ class SData is export {
             $!angle = 90; # vscale
         }
     }
-}
+
+    method angle($val?) {
+        if $val.defined {
+            # set it
+            return self.angle 
+        }
+        # return it
+        self.angle
+    }
+} # end of exported class SData
