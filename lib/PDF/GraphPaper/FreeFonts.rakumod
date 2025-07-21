@@ -1,5 +1,11 @@
 unit module PDF::GraphPaper::FreeFonts;
+use MacOS::NativeLib "*";
 
+use PDF::Font::Loader::HarfBuzz;
+use PDF::Font::Loader :load-font;
+use PDF::Content;
+
+use QueryOS;
 use PDF::Font::Loader::HarfBuzz;
 use PDF::Font::Loader :load-font;
 use PDF::Content;

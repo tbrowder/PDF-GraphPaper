@@ -39,7 +39,7 @@ scales are parallel to those edges of the paper while "left" and
 "right" scales are parallel to those edges.
 
 The scales can be added without also creating the grid. In that case,
-they will be placed but using the default or user-defined grid 
+they will be placed but using the default or user-defined grid
 corners.
 
 The other way is to specify one or more scales using C<SPEC=X>
@@ -100,7 +100,7 @@ at this link: L<SPECS|SPECS.md>.
 
 =head1 AUTHOR
 
-Tom Browder (tbrowder@acm.org)
+xdTom Browder (tbrowder@acm.org)
 
 =head1 COPYRIGHT AND LICENSE
 
