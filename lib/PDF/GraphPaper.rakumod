@@ -298,24 +298,24 @@ sub create-scales(
         # where we start depends on which side we are doing
 
         if $vscale {
-#           create-left-scale
+            create-left-scale :$page, :$debug;
             # then quit
         }
         # left
         if $GD.margins or $GD.margin-l > -1 { 
-#           create-left-scale
+            create-left-scale :$page, :$debug;
         }
         # right
         if $GD.margins or $GD.margin-r > -1 {
-#           create-right-scale
+            create-right-scale :$page, :$debug;
         }
         # top
         if $GD.margins or $GD.margin-t > -1 {
-#           create-top-scale
+            create-top-scale :$page, :$debug;
         }
         # bottom
         if $GD.margins or $GD.margin-b > -1 {
-#           create-bottom-scale
+            create-bottom-scale :$page, :$debug;
         }
 
         =begin comment
