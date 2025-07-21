@@ -15,6 +15,10 @@
     "PDF::Content::XObject",
     "PDF::Tags",
     "PDF::Content::Text::Box",
+    "PDF::Font::Loader::HarfBuzz",
+    "PDF::Font::Loader :load-font",
+    "PDF::Content",
+    "QueryOS",
     "PDF::Content::Page :PageSizes"
   ],
   "description": "Provides a binary to produce PDF graph grids on ISO paper sizes",
@@ -24,6 +28,7 @@
   "provides": {
     "PDF::GraphPaper": "lib/PDF/GraphPaper.rakumod",
     "PDF::GraphPaper::Classes": "lib/PDF/GraphPaper/Classes.rakumod",
+    "PDF::GraphPaper::FreeFonts": "lib/PDF/GraphPaper/FreeFonts.rakumod",
     "PDF::GraphPaper::Subs": "lib/PDF/GraphPaper/Subs.rakumod",
     "PDF::GraphPaper::Vars": "lib/PDF/GraphPaper/Vars.rakumod"
   },
