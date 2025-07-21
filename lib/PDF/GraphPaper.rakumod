@@ -302,19 +302,19 @@ sub create-scales(
             # then quit
         }
         # left
-        if $GD.margins or $GD.margin-l > -1 { 
+        if $gp.margins or $gp.margin-l > -1 { 
             create-left-scale :$page, :$debug;
         }
         # right
-        if $GD.margins or $GD.margin-r > -1 {
+        if $gp.margins or $gp.margin-r > -1 {
             create-right-scale :$page, :$debug;
         }
         # top
-        if $GD.margins or $GD.margin-t > -1 {
+        if $gp.margins or $gp.margin-t > -1 {
             create-top-scale :$page, :$debug;
         }
         # bottom
-        if $GD.margins or $GD.margin-b > -1 {
+        if $gp.margins or $gp.margin-b > -1 {
             create-bottom-scale :$page, :$debug;
         }
 
