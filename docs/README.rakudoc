@@ -42,10 +42,16 @@ The scales can be added without also creating the grid. In that case,
 they will be placed but using the default or user-defined grid
 corners.
 
-The other way is to specify one or more scales using C<SPEC=X>
-option where X is the name of a specification file with the desired
+The other way is to specify one or more scales in their own files
+using C<SPEC=PathList> as shown here with two files:
+
+=begin code
+SPEC=/path/s1.spec,/path/s2.spec
+=end code
+
+The files are the name of a specification file with the desired
 parameters using the same C<key value> format as the default
-specification file. For example, the contents of C<SPEC=/path/t.spec>
+specification file. For example, the contents of C<SPEC=/path/s1.spec>
 might look like:
 
 =begin code
@@ -54,10 +60,13 @@ orientation landscape
 units cm
 llx 36    # always PS points (72 per inch)
 lly 36
-scale
+scale left
 =end code
 
-That input will place a vertical scale with its lower-left cor
+That input will place a vertical scale with its lower-left corner at 
+C<36,36>. Units will be in centimeters, and numbers and tick marks
+will be on the left side of the scale.
+
 =head2 Overlay
 
 The user may easily overlay grids or ruled lines on an existing PDF
@@ -100,11 +109,11 @@ at this link: L<SPECS|SPECS.md>.
 
 =head1 AUTHOR
 
-xdTom Browder (tbrowder@acm.org)
+Tom Browder (tbrowder@acm.org)
 
 =head1 COPYRIGHT AND LICENSE
 
-© 2025 Tom Browder
+© 2024-2025 Tom Browder
 
 This library is free software; you may redistribute it or modify it
 under the Artistic License 2.0.

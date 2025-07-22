@@ -29,16 +29,20 @@ With the `scale-X` options, a scale can be added for the grid at X where X is `T
 
 The scales can be added without also creating the grid. In that case, they will be placed but using the default or user-defined grid corners.
 
-The other way is to specify one or more scales using `SPEC=X` option where X is the name of a specification file with the desired parameters using the same `key value` format as the default specification file. For example, the contents of `SPEC=/path/t.spec` might look like:
+The other way is to specify one or more scales in their own files using `SPEC=PathList` as shown here with two files:
+
+    SPEC=/path/s1.spec,/path/s2.spec
+
+The files are the name of a specification file with the desired parameters using the same `key value` format as the default specification file. For example, the contents of `SPEC=/path/s1.spec` might look like:
 
     media A4 # use glossy finish
     orientation landscape
     units cm
     llx 36    # always PS points (72 per inch)
     lly 36
-    scale
+    scale left
 
-That input will place a vertical scale with its lower-left cor
+That input will place a vertical scale with its lower-left corner at `36,36`. Units will be in centimeters, and numbers and tick marks will be on the left side of the scale.
 
 Overlay
 -------
@@ -81,7 +85,7 @@ Tom Browder (tbrowder@acm.org)
 COPYRIGHT AND LICENSE
 =====================
 
-© 2025 Tom Browder
+© 2024-2025 Tom Browder
 
 This library is free software; you may redistribute it or modify it under the Artistic License 2.0.
 
