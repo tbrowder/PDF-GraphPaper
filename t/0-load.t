@@ -2,6 +2,7 @@ use Test;
 
 my @modules = <
     PDF::GraphPaper;
+    PDF::GraphPaper::FreeFonts;
     PDF::GraphPaper::Subs;
     PDF::GraphPaper::Vars;
     PDF::GraphPaper::Classes;
