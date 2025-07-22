@@ -19,6 +19,7 @@
     "PDF::Font::Loader :load-font",
     "PDF::Content",
     "QueryOS",
+    "Text::Utils",
     "PDF::Content::Page :PageSizes"
   ],
   "description": "Provides a binary to produce PDF graph grids on ISO paper sizes",
