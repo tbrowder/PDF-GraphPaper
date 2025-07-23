@@ -31,12 +31,13 @@ isa-ok $page, PDF::Content::Page;
 
 lives-ok {
     # create-grid is in PDF/GraphPaper.rakumod
-    #create-grid :$page, :$gp; # , :debug;
     create-graph-paper :$page, :$gp; # , :debug;
 }, "test sub create-graph-paper";
 
 if $debug {
-   $pdf.save-as: "test2.pdf";
+   my $ofil = "test2.pdf";
+   $pdf.save-as: $ofil;
+   say "DEBUG: See output file '$ofil";
 }
 
 done-testing;

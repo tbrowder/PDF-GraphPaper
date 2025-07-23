@@ -1,5 +1,7 @@
 use Test;
 
+my $debug = 1;
+
 use PDF::API6;
 use PDF::Lite;
 use PDF::Content::Color :ColorName, :color;
@@ -13,8 +15,8 @@ use PDF::GraphPaper::Subs;
 use PDF::GraphPaper::Vars;
 use PDF::GraphPaper::Classes;
 
-my $gp = GPaper.new: :margins(0);
-isa-ok $gp, GPaper;
+my $gp = PDF::GraphPaper::Classes::GPaper.new: :margins(0);
+isa-ok $gp, PDF::GraphPaper::Classes::GPaper;
 is $gp.margins, 0;
 is $gp.units, "cm", "units from user's cnf file: {$gp.units}";
 
@@ -29,18 +31,28 @@ lives-ok {
 }, "test sub create-graph-paper";
 
 lives-ok {
-    create-graph-paper :$page, :$gp, :scales(True); # , :debug;
+    # we must define a SData object to use scales
+    my $SD = SData.new;
+    create-graph-paper :$page, :$gp, :$SD;
 }, "test sub create-graph-paper with scales";
 
 lives-ok {
-    create-graph-paper :$page, :$gp, :vscale(True); # , :debug;
+    my $vscale = True;
+    my $SD = SData.new;
+    create-graph-paper :$page, :$gp, :$SD, :$vscale, :$debug;
 }, "test sub create-graph-paper with vscale";
 
+if $debug {
+    my $ofil = "test0.pdf";
+    $pdf.save-as: $ofil;
+    say "DEBUG: See output file '$ofil";
+}
+
 my $gd = GData.new;
-isa-ok $gd, GData;
+isa-ok $gd, GData, "good default GData object";
 
 my $sd = SData.new;
-isa-ok $sd, SData;
+isa-ok $sd, SData, "good default SData object";
 
 done-testing;
 =finish

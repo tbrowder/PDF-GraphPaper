@@ -42,7 +42,9 @@ lives-ok {
 }, "test sub create-scales";
 
 if $debug {
-   $pdf.save-as: "test3.pdf";
+   my $ofil = "test3.pdf";
+   $pdf.save-as: $ofil; 
+   say "DEBUG: See output file '$ofil'";
 }
 
 # test changing margin settings...

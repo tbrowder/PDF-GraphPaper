@@ -31,7 +31,9 @@ lives-ok {
 }, "test sub create-graph-paper";
 
 if $debug {
-   $pdf.save-as: "test1.pdf";
+   my $ofil = "test1.pdf";
+   $pdf.save-as: $ofil;
+   say "DEBUG: See output file '$ofil";
 }
 
 done-testing;

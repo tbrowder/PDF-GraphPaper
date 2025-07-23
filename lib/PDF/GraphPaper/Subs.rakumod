@@ -114,8 +114,6 @@ sub get-paper-dimens(
 } # get-paper-dimens
 
 
-# moved to Vars.rakumod
-#my $pdf-cnf = "{%*ENV<HOME>}/pdf-graphpaper.cnf".IO // "";
 sub show-paper-sizes(
     :$debug,
     --> List
@@ -132,12 +130,7 @@ sub show-paper-sizes(
     }
 }
 
-sub create-left-scale(
-    :$page!,
-    :$debug,
-    ) is export {
-} # end of sub
-
+=begin comment
 sub create-right-scale(
     :$page!,
     :$debug,
@@ -155,4 +148,4 @@ sub create-bottom-scale(
     :$debug,
     ) is export {
 } # end of sub
-
+=end comment

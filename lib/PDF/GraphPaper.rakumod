@@ -12,6 +12,8 @@ use PDF::Content::Page :PageSizes;
 use PDF::GraphPaper::Vars;
 use PDF::GraphPaper::Subs;
 use PDF::GraphPaper::Classes;
+use PDF::GraphPaper::FreeFonts;
+my %fonts = get-loaded-fonts-hash;
 
 sub show-spec(
     :$debug,
@@ -20,7 +22,7 @@ sub show-spec(
     $gp.show-spec :$debug;
 }
 
-sub check-inputs(:$page!, :$gp!, :$GD, :$SD, :$debug) is export {
+sub check-inputs(:$page!, :$gp!, :$GD, :$SD, :$vscale, :$debug) is export {
     unless $page ~~ PDF::Content::Page {
         die "FATAL: \$page is NOT a PDF::Content::Page";
     }
@@ -36,6 +38,14 @@ sub check-inputs(:$page!, :$gp!, :$GD, :$SD, :$debug) is export {
         ++$err;
         note "FATAL: \$SD is NOT a PDF::GraphPaper::Classes::SData";
     }
+    if $vscale.defined and $vscale ~~ Bool {
+        if $vscale and not $SD.defined {
+            ++$err;
+            note "FATAL: \$vscale is True but \$SD is NOT defined";
+        }
+
+    }
+
     if $err {
         my $s = $err > 1 ?? "s" !! "";
         note "        exiting with $err fatal error$s";
@@ -59,13 +69,14 @@ sub create-graph-paper(
     # caller provides the $page to mark on
     :$page!,
     :$gp!, # the GPaper object
-    :$media = "Letter", # paper type
-    :$vscale = False,  # pass to the appropriate called subs
-    :$scales = False,  # default
+    :$SD,  # the SData object, if any, it must exist for any scales
+           #   to be generated
+    Bool :$vscale = False,   # pass to the appropriate called subs
+    Str  :$media = "Letter", # paper type
     :$debug,
     ) is export {
 
-    check-inputs :$page, :$gp;
+    check-inputs :$page, :$gp, :$SD, :$vscale;
 
     #===============================================================
     # Determine maximum horizontal and vertical grid squares
@@ -93,8 +104,8 @@ sub create-graph-paper(
     my $max-graph-width  = $page-width  - ($Lm + $Rm);
     my $max-graph-height = $page-height - ($Tm + $Bm);
 
-    say "DEBUG: max-graph-width  = $max-graph-width" if 1 or $debug;
-    say "DEBUG: max-graph-height = $max-graph-height" if 1 or $debug;
+    say "DEBUG: max-graph-width  = $max-graph-width" if $debug;
+    say "DEBUG: max-graph-height = $max-graph-height" if $debug;
 
     say "DEBUG: \$gp.cell-size-x: {$gp.cell-size-x}" if $debug;
     say "DEBUG: \$gp.cell-size-y: {$gp.cell-size-y}" if $debug;
@@ -176,30 +187,30 @@ sub create-graph-paper(
         :graph-width($graph-width),
         :graph-height($graph-height),
     );
-    
+
     # if $vscale is True, draw just the vertical scale with
     # left margin as desired
+    if $vscale {
+        ; # ok for now
+    }
 
     #========================
     # draw any scales desired
     #========================
     # create-scales
-    if $scales or $vscale {
-        my $SD = SData.new;
-        create-scales :$page, :$gp, :$GD, :$SD, :$LLX, :$LLY, :$vscale;
-    }
+    # if $vscale, we skip creating the grid and finish the page
+    create-scales :$page, :$gp, :$GD, :$SD, :$LLX, :$LLY, :$debug;
+    return if $vscale;
 
     #==============
     # draw the grid
     #==============
     # create-grid
-    if not $vscale {
-        # otherwise, we skip creating the grid and finish the page
-        create-grid :$page, :$gp, :$GD, :$LLX, :$LLY;
-    }
+    create-grid :$page, :$gp, :$GD, :$LLX, :$LLY, :$debug;
 
 } # sub create-graph-paper
 
+# create-grid :$page, :$gp, :$GD, :$LLX, :$LLY;
 sub create-grid(
       :$page!,
       :$gp!,
@@ -208,7 +219,7 @@ sub create-grid(
       :$LLY!,
       :$debug,
     ) is export {
-    check-inputs :$page, :$gp;
+    check-inputs :$page, :$gp, :$GD;
 
     # for horizontal scales
         # for top numbers and tick marks
@@ -264,6 +275,7 @@ sub create-grid(
             .LineTo: $x, $GD.graph-height;
             .Stroke;
         }
+
         say "DEBUG: Grid LineWidth = {$gp.cell-linewidth}" if $debug;
     }
 }
@@ -275,10 +287,13 @@ sub create-scales(
     :$SD!, # the SData  obj
     :$LLX!,
     :$LLY!,
-    :$vscale = False,
+    Bool :$vscale = False,
     :$debug,
     ) is export {
     check-inputs :$page, :$gp, :$GD, :$SD;
+
+    my $font = %fonts<t>;
+    my $font-size = 12;
 
     # for horizontal scales
         # for top numbers and tick marks
@@ -287,8 +302,8 @@ sub create-scales(
         # for left side numbers and tick marks
         # for right side numbers and tick marks
 
-    # get all dimens necessary so we can 
-    # use subs without the $gp, $GD, or $SD objects   
+    # get all dimens necessary so we can
+    # use subs without the $gp, $GD, or $SD objects
     $page.graphics: {
         # always start at the bottom left
         .transform: :translate($LLX, $LLY);
@@ -298,11 +313,14 @@ sub create-scales(
         # where we start depends on which side we are doing
 
         if $vscale {
-            create-left-scale :$page, :$debug;
-            # then quit
+            create-left-scale :$page, :$debug, :$vscale,
+            :$gp, $GD, $SD, :$font, :$font-size;
+           # then quit
         }
+
+        =begin comment
         # left
-        if $gp.margins or $gp.margin-l > -1 { 
+        if $gp.margins or $gp.margin-l > -1 {
             create-left-scale :$page, :$debug;
         }
         # right
@@ -317,6 +335,7 @@ sub create-scales(
         if $gp.margins or $gp.margin-b > -1 {
             create-bottom-scale :$page, :$debug;
         }
+        =end comment
 
         =begin comment
         #   left to right
@@ -458,6 +477,38 @@ sub run(@args) is export {
         say "See output file: '$ofil'";
     }
 }
+
+sub create-left-scale(
+    :$page!,
+    :$gp!, # the GPaper obj
+    :$GD!, # the GData  obj
+    :$SD!, # the SData  obj
+    :$debug,
+) is export {
+
+    =begin comment
+    #   left to right
+    for 0..$GD.ncells-x -> $i {
+        my $x = $i * $gp.cell-size-x;
+        if not $gp.major-grids {
+            .LineWidth = $gp.cell-linewidth;
+        }
+        elsif not $i mod 10 {
+            .LineWidth = $gp.grid-linewidth;
+        }
+        elsif not $i mod 5 {
+            .LineWidth = $gp.mid-grid-linewidth;
+        }
+        else {
+            .LineWidth = $gp.cell-linewidth;
+        }
+        # VERTICAL line
+        .MoveTo: $x, 0;
+        .LineTo: $x, $GD.graph-height;
+        .Stroke;
+    }
+    =end comment
+} # end of sub create-left-scale
 
 sub help is export {
     print qq:to/HERE/;

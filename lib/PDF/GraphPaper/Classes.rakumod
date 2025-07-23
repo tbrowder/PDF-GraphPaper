@@ -288,7 +288,10 @@ class SData is export {
     has $.lly      is rw = 0;
     has $.length   is rw = 0;
     has $.angle    is rw where * ~~ /^ 0|90 $/;
-    has $.location is rw where * ~~ /^ :i t|b|l|r/;
+    has $.Tm       is rw = False;
+    has $.Bm       is rw = False;
+    has $.Lm       is rw = False;
+    has $.Rm       is rw = False;
 
     submethod TWEAK {
         # defaults
@@ -300,9 +303,28 @@ class SData is export {
     method angle($val?) {
         if $val.defined {
             # set it
-            return self.angle 
+            self.angle = $val;
+            return; 
         }
         # return it
         self.angle
     }
+
+    method Tm(Bool $val?) {
+        if $val.defined { self.Tm = $val }
+        else            { self.Tm }
+    }
+    method Bm(Bool $val?) {
+        if $val.defined { self.Bm = $val }
+        else            { self.Bm }
+    }
+    method Lm(Bool $val?) {
+        if $val.defined { self.Lm = $val }
+        else            { self.Lm }
+    }
+    method Rm(Bool $val?) {
+        if $val.defined { self.Rm = $val }
+        else            { self.Rm }
+    }
+
 } # end of exported class SData

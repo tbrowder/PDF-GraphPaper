@@ -1,9 +1,13 @@
+Note much of this needs to be in independent modules like PDF::Graphics::Utils
+  and GNU::FreeFont::OTF
+
+
 Actually create the scales, then use before
 publishing to finish FormFill for GBUMC
 
 see PDF::FormFill for the GBUMC 3-page form to fill
   bash alias: cdpo # what?
-    
+
 Add reading user's spec in TWEAK
 
 Add classes
@@ -16,7 +20,7 @@ Fix all modes and options:
   * = done
    vscale
       Allow for a single gridded line like a ruler
-  
+
    spec=X
 
    text-line
@@ -30,5 +34,3 @@ Move to multi MAINs
 =done Fix test t/2/*t to eliminate:
     @!attrs
     %!attr
-
-

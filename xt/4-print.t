@@ -1,6 +1,6 @@
 use Test;
 
-my $debug = 0;
+my $debug = 1;
 
 # use required libs
 use MacOS::NativeLib "*";
@@ -11,12 +11,11 @@ use PDF::Content::XObject;
 use PDF::Tags;
 use PDF::Content::Text::Box;
 
-use PDF::NameTags::FreeFonts;
-
-sub print-text {...};
-
+use PDF::GraphPaper::FreeFonts;
 my %fonts = get-loaded-fonts-hash;
 my $font = %fonts<t>;
+
+sub print-text {...};
 
 my $pdf = PDF::Lite.new;
 my $page = $pdf.add-page;
@@ -28,9 +27,9 @@ my $text = "Test text";
 print-text $text, :$font, :$page;
 
 if $debug {
-    my $ofil = "test3.pdf";
+    my $ofil = "test4.pdf";
     $pdf.save-as: $ofil;
-    say "See output pdf file: $ofil";
+    say "DEBUG: See output file '$ofil'";
 }
 
 done-testing;
@@ -40,10 +39,10 @@ sub print-text(
     :$page!,
     # text origin
     :$x = 72, :$y = 300,
-    :$font-size = 12,
-    :$font!,   # the font file name
+    :$font-size = 16,
+    :$font!,   # the font object
     :$angle = 0;
-    :$align = "left", # right, justifi
+    :$align = "left", # right, justify
 #   :$valign = "baseline", # default is baseline which is zero reference
               # options: top, bottom, center
     ) {
@@ -63,5 +62,4 @@ sub print-text(
                  $font-size; # the size
         .print: $text, :$align; #, :$valign;
     }
-
 }

@@ -8,7 +8,6 @@
   ],
   "depends": [
     "MacOS::NativeLib",
-    "FontFactory::Type1",
     "PDF::API6",
     "PDF::Lite",
     "PDF::Content",
