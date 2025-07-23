@@ -13,7 +13,9 @@ use PDF::GraphPaper::Vars;
 use PDF::GraphPaper::Subs;
 use PDF::GraphPaper::Classes;
 use PDF::GraphPaper::FreeFonts;
-my %fonts = get-loaded-fonts-hash;
+
+# try using a BEGIN block if need be
+our %fonts = get-loaded-fonts-hash;
 
 sub show-spec(
     :$debug,
@@ -485,6 +487,8 @@ sub create-left-scale(
     :$SD!, # the SData  obj
     :$debug,
 ) is export {
+
+    my $font = %fonts<t>;
 
     =begin comment
     #   left to right
