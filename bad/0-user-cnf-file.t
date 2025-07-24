@@ -54,8 +54,8 @@ isa-ok $gd, GData, "good default GData object";
 my $sd = SData.new;
 isa-ok $sd, SData, "good default SData object";
 
-done-testing;
-=finish
+#done-testing;
+#=finish
 
 $gp = GPaper.new: :scales(True);
 isa-ok $gp, GPaper;

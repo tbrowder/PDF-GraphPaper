@@ -480,15 +480,104 @@ sub run(@args) is export {
     }
 }
 
+# create-left-scale :$page, :$debug, :$vscale,
+# :$gp, $GD, $SD, :$font, :$font-size;
 sub create-left-scale(
     :$page!,
     :$gp!, # the GPaper obj
     :$GD!, # the GData  obj
     :$SD!, # the SData  obj
+    :$font!,
+    :$font-size!,
+    :$vscale!,
     :$debug,
 ) is export {
 
-    my $font = %fonts<t>;
+    my $llx;
+    my $lly;
+    if $vscale {
+        $llx = 36;
+        $lly = 0;
+    }
+    else {
+        $llx = 0;
+        $lly = 0;
+    }
+    
+    # standard linewidths in PS points
+    # mid-grid line only for even number of cells-per-grid
+    # has $.cell-linewidth     is rw = 0;    # very fine line
+    # has $.mid-grid-linewidth is rw = 0.75; # heavier line width (for even cpg)
+    # has $.grid-linewidth is rw     = 1.40; # heavier line width
+
+    # tick thicknesses (widths)
+    my $tic-thick0  = 0;
+    my $tic-thick5  = 0.75;
+    my $tic-thick10 = 1.40;
+    # tick lengths
+    my $tic-length0  = 0;
+    my $tic-length5  = 0.75;
+    my $tic-length10 = 1.40;
+   
+    my $height = $gp.page-height;
+    $page.graphics: {
+        .transform: :translate($llx, $lly);
+        # VERTICAL line
+        .LineWidth = 0.7; # ?$gp.cell-linewidth;
+        .MoveTo: 0, 0;
+        .LineTo: 0, $height; ## page height$ury, $GD.graph-height;
+        .Stroke;
+
+        # tick marks and numbers
+        .MoveTo: 0, 0;
+        my $y = 0;
+        my $inc = 0.1 * $gp.units; 
+        my $tick-angle = 0; # degrees
+        my $tnum = 0;
+        my ($width, $length);
+        my $scale-number = 0; # for the scale markings
+        my $put-scale-number = True; # first pass
+        while $y <= $height {
+            ++$tnum; # 1..10
+            # make a tick mark every increment
+            # parameters depend on increment number
+            #   marks are from vertical centerline to desire mark length
+            # make a longer tick mark every 5th increment
+            # make an even longer tick mark every 10th increment
+            # print a scale number at zero and every 10th increment
+            if $tnum == 5 {
+                $width  = $tic-thick5;
+                $length = $tic-length5;
+            }
+            elsif $tnum == 10 {
+                $width  = $tic-thick10;
+                $length = $tic-length10;
+                ++$scale-number;
+                $put-scale-number = True;
+            }
+            else {
+                $width  = $tic-thick0;
+                $length = $tic-length0;
+            }
+
+            draw-line-in-situ :$page, :angle($tick-angle), :x($llx), :$y, 
+                              :$width, :$length;
+
+            if $put-scale-number {
+                my $delta-x = 2 + $tic-length10;
+                print-scale-number-in-situ :$page, :x($delta-x), :$y, :$font, 
+                                           :$font-size; # add angle and color
+                $put-scale-number = False;
+            }
+
+            # increment by 0.1 of the scale units
+            $y += $inc;
+            # reset increment counter if need be
+            if $tnum == 10 {
+                $tnum = 0;
+            }
+        }
+    }
 
     =begin comment
     #   left to right

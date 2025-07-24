@@ -13,6 +13,34 @@ use Text::Utils :ALL;
 
 use PDF::GraphPaper::Vars;
 
+# print-scale-number-in-situ :$page, :x($delta-x), :$y, :$font, 
+#                            :$font-size; # add angle and color
+sub print-scale-number-in-situ(
+    :$page!, 
+    :$x!, 
+    :$y!, 
+    :$font!, 
+    :$font-size!, # add optional angle and color
+    :$angle = 90,
+    ) is export {
+}
+
+# draw-line-in-situ :$page, :angle(), :x(), y(), :length(), :width();
+sub draw-line-in-situ(
+    :$page!, 
+    :$angle!, 
+    :$x!, 
+    :$y!, 
+    :$length!, 
+    :$width!;
+    :$debug,
+) is export {
+    # the line's x=0 and y=0 are at the desired rotation point
+    # the line's angle regerence is horizontal at zero, positive increasing
+    #   counter-clockwise
+
+}
+ 
 sub read-specs-file(
     IO::Path $fil,
     --> Array) is export {

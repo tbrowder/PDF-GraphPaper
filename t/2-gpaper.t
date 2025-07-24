@@ -41,4 +41,3 @@ if $debug {
 }
 
 done-testing;
-=finish

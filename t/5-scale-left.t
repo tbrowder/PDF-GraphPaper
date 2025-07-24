@@ -18,9 +18,6 @@ use PDF::GraphPaper::Classes;
 my $gp = GPaper.new;
 isa-ok $gp, GPaper;
 
-# check the default attr values
-$gp.show-spec;
-
 is $gp.margins, 72;
 
 my $pdf  = PDF::Lite.new;
@@ -29,12 +26,15 @@ isa-ok $pdf, PDF::Lite;
 my $page = $pdf.add-page;
 isa-ok $page, PDF::Content::Page;
 
-lives-ok {
-    create-graph-paper :$page, :$gp; # , :debug;
-}, "test sub create-graph-paper";
+my $SD = SData.new;
+isa-ok $SD, SData;
+is $SD.angle, 90, "default angle 90 degrees";
+is $SD.Ls, True, "default left scale";
+is $SD.Bs, True, "default bottom scale";
 
 lives-ok {
-    my $SD = SData.new;
+    my $Ls = True; # use a left-side scale
+    my $SD = SData.new: :$Ls;
     my $GD = GData.new;
     my ($LLX, $LLY) = 72, 72;
     my $vscale = False;
@@ -42,12 +42,11 @@ lives-ok {
 }, "test sub create-scales";
 
 if $debug {
-   my $ofil = "test3.pdf";
+   my $ofil = "test5.pdf";
    $pdf.save-as: $ofil; 
    say "DEBUG: See output file '$ofil'";
 }
 
-# test changing margin settings...
 $gp.tm: 6;
 is $gp.tm, 6, "set tm 6";
 is $gp.bm, $gp.margins, "check bm still default {$gp.margins}";

@@ -33,8 +33,7 @@ role DefaultAttributes {
     # standard linewidths in PS points
     # mid-grid line only for even number of cells-per-grid
     has $.cell-linewidth     is rw = 0;    # very fine line
-    has $.mid-grid-linewidth is rw = 0.75; # heavier line width
-                                           #  (for even cpg)
+    has $.mid-grid-linewidth is rw = 0.75; # heavier line width (for even cpg)
     has $.grid-linewidth is rw     = 1.40; # heavier line width
 
     # 6 more attrs
@@ -288,10 +287,11 @@ class SData is export {
     has $.lly      is rw = 0;
     has $.length   is rw = 0;
     has $.angle    is rw where * ~~ /^ 0|90 $/;
-    has $.Tm       is rw = False;
-    has $.Bm       is rw = False;
-    has $.Lm       is rw = False;
-    has $.Rm       is rw = False;
+    # side scales
+    has Bool $.ts  is rw = False;
+    has Bool $.bs  is rw = True;
+    has Bool $.ls  is rw = True;
+    has Bool $.rs  is rw = False;
 
     submethod TWEAK {
         # defaults
@@ -300,31 +300,26 @@ class SData is export {
         }
     }
 
-    method angle($val?) {
-        if $val.defined {
-            # set it
-            self.angle = $val;
-            return; 
-        }
-        # return it
-        self.angle
+    method Angle($val?) {
+        if $val.defined and $val ~~ Numeric { self.angle = $val }
+        else            { self.angle }
     }
 
-    method Tm(Bool $val?) {
-        if $val.defined { self.Tm = $val }
-        else            { self.Tm }
+    method Ts(Bool $val?) {
+        if $val.defined { self.ts = $val }
+        else            { self.ts }
     }
-    method Bm(Bool $val?) {
-        if $val.defined { self.Bm = $val }
-        else            { self.Bm }
+    method Bs(Bool $val?) {
+        if $val.defined { self.bs = $val }
+        else            { self.bs }
     }
-    method Lm(Bool $val?) {
-        if $val.defined { self.Lm = $val }
-        else            { self.Lm }
+    method Ls(Bool $val?) {
+        if $val.defined { self.ls = $val }
+        else            { self.ls }
     }
-    method Rm(Bool $val?) {
-        if $val.defined { self.Rm = $val }
-        else            { self.Rm }
+    method Rs(Bool $val?) {
+        if $val.defined { self.rs = $val }
+        else            { self.rs }
     }
 
 } # end of exported class SData
