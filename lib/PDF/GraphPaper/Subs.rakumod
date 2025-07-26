@@ -13,20 +13,21 @@ use Text::Utils :ALL;
 
 use PDF::GraphPaper::Vars;
 
-# print-scale-number-in-situ :$page, :x($delta-x), :$y, :$font, 
+# print-scale-number :$page, :x($delta-x), :$y, :$font, 
 #                            :$font-size; # add angle and color
-sub print-scale-number-in-situ(
+sub print-scale-number(
     :$page!, 
     :$x!, 
     :$y!, 
     :$font!, 
     :$font-size!, # add optional angle and color
     :$angle = 90,
-    ) is export {
+    :$debug,
+) is export {
 }
 
-# draw-line-in-situ :$page, :angle(), :x(), y(), :length(), :width();
-sub draw-line-in-situ(
+# draw-line :$page, :angle(), :x(), y(), :length(), :width();
+sub draw-line(
     :$page!, 
     :$angle!, 
     :$x!, 

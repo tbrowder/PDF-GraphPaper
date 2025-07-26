@@ -24,7 +24,8 @@ isa-ok $page, PDF::Content::Page;
 my ($x, $y) = 72, 300;
 
 my $text = "Test text";
-print-text $text, :$font, :$page;
+my $valign;
+print-text $text, :$font, :$page, :$valign;
 
 if $debug {
     my $ofil = "test4.pdf";
@@ -39,12 +40,14 @@ sub print-text(
     :$page!,
     # text origin
     :$x = 72, :$y = 300,
-    :$font-size = 16,
     :$font!,   # the font object
     :$angle = 0;
+    :$font-size = 16,
     :$align = "left", # right, justify
-#   :$valign = "baseline", # default is baseline which is zero reference
-              # options: top, bottom, center
+    # valign options: top, bottom, center (or ?)
+    # syntax from David
+    :$valign! is copy, # per David (but without the '!')
+    :$baseline = $valign // 'alphabetic', # per David (but what does 'alphabetic' mean?)
     ) {
 
     #==========================================

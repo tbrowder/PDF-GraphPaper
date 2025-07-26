@@ -18,6 +18,7 @@
     "PDF::Tags",
     "PDF::Font::Loader::HarfBuzz",
     "PDF::Font::Loader :load-font",
+    "Compress::PDF",
     "QueryOS",
     "Text::Utils"
   ],

@@ -560,12 +560,12 @@ sub create-left-scale(
                 $length = $tic-length0;
             }
 
-            draw-line-in-situ :$page, :angle($tick-angle), :x($llx), :$y, 
+            draw-line :$page, :angle($tick-angle), :x($llx), :$y, 
                               :$width, :$length;
 
             if $put-scale-number {
                 my $delta-x = 2 + $tic-length10;
-                print-scale-number-in-situ :$page, :x($delta-x), :$y, :$font, 
+                print-scale-number :$page, :x($delta-x), :$y, :$font, 
                                            :$font-size; # add angle and color
                 $put-scale-number = False;
             }
