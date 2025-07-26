@@ -4,6 +4,7 @@ my $debug = 1;
 
 use PDF::API6;
 use PDF::Lite;
+use PDF::Content;
 use PDF::Content::Color :ColorName, :color;
 use PDF::Content::XObject;
 use PDF::Tags;
@@ -23,7 +24,7 @@ my $pdf  = PDF::Lite.new;
 isa-ok $pdf, PDF::Lite;
 
 my $page = $pdf.add-page;
-isa-ok $page, PDF::Content::Page;
+isa-ok $page, PDF::Lite::Page;
 
 lives-ok {
     #create-grid :$page, :$gp; # , :debug;
@@ -31,9 +32,11 @@ lives-ok {
 }, "test sub create-graph-paper";
 
 if $debug {
-   my $ofil = "test1.pdf";
-   $pdf.save-as: $ofil;
-   say "DEBUG: See output file '$ofil";
+    my $ofil = "test1.pdf";
+    $pdf.save-as: $ofil;
+    isa-ok $ofil, Str;
+
+    say "DEBUG: See output file '$ofil";
 }
 
 done-testing;

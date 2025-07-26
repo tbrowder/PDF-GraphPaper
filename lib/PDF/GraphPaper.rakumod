@@ -14,7 +14,6 @@ use PDF::GraphPaper::Subs;
 use PDF::GraphPaper::Classes;
 use PDF::GraphPaper::FreeFonts;
 
-# try using a BEGIN block if need be
 our %fonts = get-loaded-fonts-hash;
 
 sub show-spec(
@@ -25,6 +24,8 @@ sub show-spec(
 }
 
 sub check-inputs(:$page!, :$gp!, :$GD, :$SD, :$vscale, :$debug) is export {
+#=begin comment
+# temp null for debugging
     unless $page ~~ PDF::Content::Page {
         die "FATAL: \$page is NOT a PDF::Content::Page";
     }
@@ -53,6 +54,7 @@ sub check-inputs(:$page!, :$gp!, :$GD, :$SD, :$vscale, :$debug) is export {
         note "        exiting with $err fatal error$s";
         exit;
     }
+#=end comment
 }
 
 sub text-line(
@@ -60,9 +62,10 @@ sub text-line(
     :$page!,
     :$gp!, # the GPaper object
     :$media = "Letter", # paper type
+    :$check = False,
     :$debug,
     ) is export {
-    check-inputs :$page, :$gp;
+    check-inputs(:$page, :$gp) if $check;
 }
 
 sub create-graph-paper(
@@ -75,10 +78,11 @@ sub create-graph-paper(
            #   to be generated
     Bool :$vscale = False,   # pass to the appropriate called subs
     Str  :$media = "Letter", # paper type
+    :$check = False,
     :$debug,
     ) is export {
 
-    check-inputs :$page, :$gp, :$SD, :$vscale;
+    check-inputs(:$page, :$gp, :$SD, :$vscale) if $check;
 
     #===============================================================
     # Determine maximum horizontal and vertical grid squares
@@ -201,7 +205,9 @@ sub create-graph-paper(
     #========================
     # create-scales
     # if $vscale, we skip creating the grid and finish the page
-    create-scales :$page, :$gp, :$GD, :$SD, :$LLX, :$LLY, :$debug;
+    if $SD.defined {
+        create-scales :$page, :$gp, :$GD, :$SD, :$LLX, :$LLY, :$debug;
+    }
     return if $vscale;
 
     #==============
@@ -219,9 +225,12 @@ sub create-grid(
       :$GD!,
       :$LLX!,
       :$LLY!,
+      :$check = False,
       :$debug,
     ) is export {
-    check-inputs :$page, :$gp, :$GD;
+    check-inputs(:$page, :$gp, :$GD) if $check;
+
+    say "DEBUG: in sub create-grid...";
 
     # for horizontal scales
         # for top numbers and tick marks
@@ -230,7 +239,8 @@ sub create-grid(
         # for left side numbers and tick marks
         # for right side numbers and tick marks
 
-    $page.graphics: {
+    $page.gfx: {
+        .Save;
         .transform: :translate($LLX, $LLY);
 
         # draw horizontal lines, $y is varying 0 to $twidth
@@ -279,8 +289,9 @@ sub create-grid(
         }
 
         say "DEBUG: Grid LineWidth = {$gp.cell-linewidth}" if $debug;
+        .Restore;
     }
-}
+} # end of sub create-grid
 
 sub create-scales(
     :$page!,
@@ -290,9 +301,10 @@ sub create-scales(
     :$LLX!,
     :$LLY!,
     Bool :$vscale = False,
+    :$check = False,
     :$debug,
     ) is export {
-    check-inputs :$page, :$gp, :$GD, :$SD;
+    check-inputs(:$page, :$gp, :$GD, :$SD) if $check;
 
     my $font = %fonts<t>;
     my $font-size = 12;
@@ -306,7 +318,10 @@ sub create-scales(
 
     # get all dimens necessary so we can
     # use subs without the $gp, $GD, or $SD objects
-    $page.graphics: {
+
+
+    $page.gfx: {
+        .Save;
         # always start at the bottom left
         .transform: :translate($LLX, $LLY);
 
@@ -317,7 +332,11 @@ sub create-scales(
         if $vscale {
             create-left-scale :$page, :$debug, :$vscale,
             :$gp, $GD, $SD, :$font, :$font-size;
-           # then quit
+            # then quit
+        }
+        else {
+            create-left-scale :$page, :$debug,
+            :$gp, $GD, $SD, :$font, :$font-size;
         }
 
         =begin comment
@@ -361,8 +380,10 @@ sub create-scales(
             .Stroke;
         }
         =end comment
+        .Restore;
     }
-}
+} # end of sub create-scales
+
 
 sub run(@args) is export {
     say "Executing {$*PROGRAM.basename}...";
@@ -459,7 +480,7 @@ sub run(@args) is export {
 
     if $pdf {
         # open the output file
-        my $pdf = PDF::Lite.new;
+        my PDF::Lite $pdf .= new;
         my $page = $pdf.add-page;
         my $gp = PDF::GraphPaper::Classes::GPaper.new;
         # make any changes to $gp
@@ -503,7 +524,7 @@ sub create-left-scale(
         $llx = 0;
         $lly = 0;
     }
-    
+
     # standard linewidths in PS points
     # mid-grid line only for even number of cells-per-grid
     # has $.cell-linewidth     is rw = 0;    # very fine line
@@ -518,9 +539,16 @@ sub create-left-scale(
     my $tic-length0  = 0;
     my $tic-length5  = 0.75;
     my $tic-length10 = 1.40;
-   
+
     my $height = $gp.page-height;
-    $page.graphics: {
+    say qq:to/HERE/;
+    DEBUG: llx = $llx
+           lly = $lly
+           height = $height
+    HERE
+
+    $page.gfx: {
+        .Save;
         .transform: :translate($llx, $lly);
         # VERTICAL line
         .LineWidth = 0.7; # ?$gp.cell-linewidth;
@@ -528,10 +556,11 @@ sub create-left-scale(
         .LineTo: 0, $height; ## page height$ury, $GD.graph-height;
         .Stroke;
 
+        =begin comment
         # tick marks and numbers
         .MoveTo: 0, 0;
         my $y = 0;
-        my $inc = 0.1 * $gp.units; 
+        my $inc = 0.1 * $gp.units;
         my $tick-angle = 0; # degrees
         my $tnum = 0;
         my ($width, $length);
@@ -560,12 +589,14 @@ sub create-left-scale(
                 $length = $tic-length0;
             }
 
-            draw-line :$page, :angle($tick-angle), :x($llx), :$y, 
+            # in Subs
+            draw-line :$page, :angle($tick-angle), :x($llx), :$y,
                               :$width, :$length;
 
             if $put-scale-number {
                 my $delta-x = 2 + $tic-length10;
-                print-scale-number :$page, :x($delta-x), :$y, :$font, 
+                # in this module...
+                print-scale-number :$page, :x($delta-x), :$y, :$font,
                                            :$font-size; # add angle and color
                 $put-scale-number = False;
             }
@@ -577,6 +608,8 @@ sub create-left-scale(
                 $tnum = 0;
             }
         }
+        =end comment
+        .Restore;
     }
 
     =begin comment
@@ -601,7 +634,51 @@ sub create-left-scale(
         .Stroke;
     }
     =end comment
+
 } # end of sub create-left-scale
+
+=begin comment
+sub create-right-scale(
+    :$page!,
+    :$debug,
+    ) is export {
+} # end of sub
+
+sub create-top-scale(
+    :$page!,
+    :$debug,
+) is export {
+} # end of sub
+
+sub create-bottom-scale(
+    :$page!,
+    :$debug,
+    ) is export {
+} # end of sub
+=end comment
+
+# print-scale-number :$page, :x($delta-x), :$y, :$font,
+#                    :$font-size; # add angle and color
+sub print-scale-number(
+    :$page!,
+    :$x!,
+    :$y!,
+    :$font!,
+    :$font-size!, # add angle and color
+    :$align  where * ~~ /left|justify|center/, # it depends on which scale
+    :$valign where * ~~ /top|center|bottom/,
+    :$angle = 0,
+    :$debug,
+) is export {
+
+    $page.gfx: -> {
+        .Save;
+        .transfosm
+        .transform: :translate($x, $y);
+        .Restore;
+    }
+
+} # end of sub print-scale-number
 
 sub help is export {
     print qq:to/HERE/;
@@ -624,4 +701,4 @@ sub help is export {
                      of a page with default X=0.5in and Y=0in
 
     HERE
-}
+} # end of HELP sub

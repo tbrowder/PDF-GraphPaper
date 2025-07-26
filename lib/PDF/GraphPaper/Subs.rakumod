@@ -13,35 +13,27 @@ use Text::Utils :ALL;
 
 use PDF::GraphPaper::Vars;
 
-# print-scale-number :$page, :x($delta-x), :$y, :$font, 
-#                            :$font-size; # add angle and color
-sub print-scale-number(
-    :$page!, 
-    :$x!, 
-    :$y!, 
-    :$font!, 
-    :$font-size!, # add optional angle and color
-    :$angle = 90,
-    :$debug,
-) is export {
-}
-
 # draw-line :$page, :angle(), :x(), y(), :length(), :width();
 sub draw-line(
-    :$page!, 
-    :$angle!, 
-    :$x!, 
-    :$y!, 
-    :$length!, 
+    :$page!,
+    :$angle!,
+    :$x!,
+    :$y!,
+    :$length!,
     :$width!;
     :$debug,
 ) is export {
     # the line's x=0 and y=0 are at the desired rotation point
     # the line's angle regerence is horizontal at zero, positive increasing
     #   counter-clockwise
+    $page.gfx: {
+        .Save;
+
+        .Restore;
+    }
 
 }
- 
+
 sub read-specs-file(
     IO::Path $fil,
     --> Array) is export {
@@ -70,7 +62,6 @@ sub deg2rad($degrees) is export {
 sub rad2deg($radians) is export {
     $radians * 180 / pi
 }
-
 
 sub create-spec-file(
     $ofil?,
@@ -158,23 +149,3 @@ sub show-paper-sizes(
         say "  $k: $v";
     }
 }
-
-=begin comment
-sub create-right-scale(
-    :$page!,
-    :$debug,
-    ) is export {
-} # end of sub
-
-sub create-top-scale(
-    :$page!,
-    :$debug,
-    ) is export {
-} # end of sub
-
-sub create-bottom-scale(
-    :$page!,
-    :$debug,
-    ) is export {
-} # end of sub
-=end comment

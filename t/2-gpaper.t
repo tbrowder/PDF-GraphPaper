@@ -4,6 +4,7 @@ my $debug = 1;
 
 use PDF::API6;
 use PDF::Lite;
+use PDF::Content;
 use PDF::Content::Color :ColorName, :color;
 use PDF::Content::XObject;
 use PDF::Tags;
@@ -23,15 +24,15 @@ $gp.show-spec;
 
 is $gp.margins, 72;
 
-my $pdf  = PDF::Lite.new;
+my PDF::Lite $pdf .= new;
 isa-ok $pdf, PDF::Lite;
 
-my $page = $pdf.add-page;
-isa-ok $page, PDF::Content::Page;
+my PDF::Lite::Page $page = $pdf.add-page;
+isa-ok $page, PDF::Lite::Page;
 
 lives-ok {
     # create-grid is in PDF/GraphPaper.rakumod
-    create-graph-paper :$page, :$gp; # , :debug;
+    create-graph-paper :$page, :$gp, :$debug;
 }, "test sub create-graph-paper";
 
 if $debug {

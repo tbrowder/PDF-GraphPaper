@@ -17,7 +17,7 @@ my $font = %fonts<t>;
 
 sub print-text {...};
 
-my $pdf = PDF::Lite.new;
+my PDF::Lite $pdf .= new;
 my $page = $pdf.add-page;
 isa-ok $page, PDF::Content::Page;
 
@@ -51,7 +51,8 @@ sub print-text(
     ) {
 
     #==========================================
-    $page.graphics: {
+    $page.gfx: {
+        .Save;
         # my $gb = "GBUMC";
         # my $tx = $cx;
         # my $ty = $cy + ($height * 0.5) - $line1Y;
@@ -64,5 +65,6 @@ sub print-text(
         .font = $font, # %fonts<hb>, #.core-font('HelveticaBold'),
                  $font-size; # the size
         .print: $text, :$align; #, :$valign;
+        .Restore;
     }
 }

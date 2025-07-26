@@ -18,18 +18,18 @@ is $res, '0 0 612 792';
 lives-ok {
     $ofil = "test.pdf";
     #my $p = PDF::GraphPaper::GPaper.new;
-    my $p = GPaper.new;
-    run "bin/make-graph-paper", $ofil, :$p, :debug(1);
+    my $gp = GPaper.new;
+    run "bin/make-graph-paper", $ofil, :debug(1);
 }, "default graph paper";
 
 lives-ok {
     $ofil = "test2.pdf";
-    my $p = GPaper.new;
+    my $gp = GPaper.new;
    
-    $p.major-grids = 0;
-    $p.cell-size = 1; # input in inches
-    $p.cells-per-grid = 0;
-    run "bin/make-graph-paper", $ofil, :$p, :debug(1);
+    $gp.major-grids = 0;
+    $gp.cell-size = 1; # input in inches
+    $gp.cells-per-grid = 0;
+    run "bin/make-graph-paper", $ofil, :$gp, :debug(1);
 }, "customized graph paper";
 
 done-testing;
