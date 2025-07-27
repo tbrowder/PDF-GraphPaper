@@ -25,6 +25,6 @@ if $pdfin eq $txtout {
     say "FATAL: Input and output files are the same...exiting";
 }
 
-run "pdftk", "$pdfin", "output", "$uncpdf", "uncompress";
+run "pdftk", "$pdfin", "output", "$txtout", "uncompress";
 
 say "See output text file: $txtout";
