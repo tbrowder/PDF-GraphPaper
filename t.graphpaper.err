@@ -1,0 +1,25 @@
+# Failed test 'sub create-graph-paper, vscale = True'
+# at t/5-scale-left.t line 55
+# Too many positionals passed; expected 0 arguments but got 1
+'q' (Save) unmatched by closing 'Q' (Restore) at end of content stream
+  in block  at /home/tbrowde/.raku/sources
+
+(PDF::Content::Canvas) line 114
+in method cb-finish at /home/tbrowde/.raku/sour..
+
+(PDF::Content::Page) line 102
+  in method cb-finish at /home/tbrowde/.raku/sources/E07CEA4D1B8F3DC1AD3B0C3363BC30AAD28FABC4 
+(PDF::Content::PageTree) line 292
+  in method cb-finish at /home/tbrowde/.raku/sources/4B8C75FABE2EECDD858ED982A1205411328CBCE2 
+(PDF::Lite) line 96
+  in method cb-finish at /home/tbrowde/.raku/sources/72088D9EFF822892EFD1C8E198C44E99BC7EF552 
+(PDF) line 103
+  in method ast at /home/tbrowde/.raku/sources/72088D9EFF822892EFD1C8E198C44E99BC7EF552 
+(PDF) line 178
+  in method ast-writer at /home/tbrowde/.raku/sources/72088D9EFF822892EFD1C8E198C44E99BC7EF552 
+
+(PDF) line 190
+  in method save-as at /home/tbrowde/.raku/sources/72088D9EFF822892EFD1C8E198C44E99BC7EF552 
+(PDF) line 226
+  in block <unit> at t/5-scale-left.t line 71
+
