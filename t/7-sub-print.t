@@ -11,29 +11,33 @@ use PDF::Content::XObject;
 use PDF::Tags;
 use PDF::Content::Text::Box;
 
+use PDF::GraphPaper;
 use PDF::GraphPaper::FreeFonts;
+use PDF::GraphPaper::Classes;
+
 my %fonts = get-loaded-fonts-hash;
 my $font = %fonts<t>;
-
-sub print-text {...};
 
 my PDF::Lite $pdf .= new;
 my $page = $pdf.add-page;
 isa-ok $page, PDF::Content::Page;
 
-my ($x, $y) = 72, 300;
+my ($x, $y) = 100, 400;
+my $angle = 45;
 
-my $text = "Test text";
-my $valign;
-print-text $text, :$font, :$page, :$valign;
+my $gp = GPaper.new;
+my $text = "Test text at angle $angle";
+text-line  $text, :$x, :$y, :$gp, :$font, :$angle, :$page;
 
 if $debug {
-    my $ofil = "test4.pdf";
+    my $ofil = "test7.pdf";
     $pdf.save-as: $ofil;
     say "DEBUG: See output file '$ofil'";
 }
 
 done-testing;
+
+=finish
 
 sub print-text(
     $text,
@@ -47,11 +51,12 @@ sub print-text(
     # valign options: top, bottom, center (or ?)
     # syntax from David
     :$valign! is copy, # per David (but without the '!')
-    :$baseline = $valign // 'alphabetic', # per David (but what does 'alphabetic' mean?)
+    # per David (but what does 'alphabetic' mean?)
+    :$baseline = $valign // 'alphabetic', 
     ) {
 
     #==========================================
-    $page.gfx: {
+    $page.graphics: {
         .Save;
         # my $gb = "GBUMC";
         # my $tx = $cx;
@@ -62,9 +67,9 @@ sub print-text(
             .transform: :rotate($angle);
         }
         #.FillColor = color White; #rgb(0, 0, 0); # color Black
-        .font = $font, # %fonts<hb>, #.core-font('HelveticaBold'),
-                 $font-size; # the size
-        .print: $text, :$align; #, :$valign;
+        .font = $font,      # %fonts<hb>, #.core-font('HelveticaBold'),
+                $font-size; # the size
+        .print: $text;      #, :$align; #, :$valign;
         .Restore;
     }
 }

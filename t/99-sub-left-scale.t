@@ -11,24 +11,25 @@ use PDF::Content::XObject;
 use PDF::Tags;
 use PDF::Content::Text::Box;
 
-use PDF::GraphPaper::FreeFonts;
-my %fonts = get-loaded-fonts-hash;
-my $font = %fonts<t>;
-
-sub print-text {...};
+use PDF::GraphPaper::Free;
+use PDF::GraphPaper::Subs;
+use PDF::GraphPaper::Subs;
 
 my PDF::Lite $pdf .= new;
 my $page = $pdf.add-page;
 isa-ok $page, PDF::Content::Page;
 
-my ($x, $y) = 72, 300;
+my ($x, $y) = 300, 300;
+my $angle   = 45;
+my $length  = 144;
+my $width   = 0.75;
 
-my $text = "Test text";
-my $valign;
-print-text $text, :$font, :$page, :$valign;
+lives-ok {
+    draw-line :$x, :$y, :$length, :$width, :$angle, :$page;
+}, "draw-line";
 
 if $debug {
-    my $ofil = "test4.pdf";
+    my $ofil = "test9.pdf";
     $pdf.save-as: $ofil;
     say "DEBUG: See output file '$ofil'";
 }

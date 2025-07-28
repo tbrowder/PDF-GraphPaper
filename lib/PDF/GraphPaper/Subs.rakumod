@@ -23,15 +23,23 @@ sub draw-line(
     :$width!;
     :$debug,
 ) is export {
-    # the line's x=0 and y=0 are at the desired rotation point
-    # the line's angle regerence is horizontal at zero, positive increasing
+    # The line's x=0 and y=0 are at the desired rotation point
+    #   at the left edge of the line (after rotation).
+    #   and the width is in the y direction, length in the x direction
+    # The line's angle reference is horizontal at zero, positive increasing
     #   counter-clockwise
-    $page.gfx: {
-        .Save;
+    $page.graphics: {
+        .transform: :translate($x, $y);
+        if $angle {
+            .transform: :rotate($angle);
+        }
 
-        .Restore;
+        # starting at x=0, y=0
+        .SetLineWidth: $width;
+        .MoveTo: 0,       0;
+        .LineTo: $length, 0;
+        .Stroke;
     }
-
 }
 
 sub read-specs-file(

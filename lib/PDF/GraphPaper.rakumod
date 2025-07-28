@@ -59,13 +59,27 @@ sub check-inputs(:$page!, :$gp!, :$GD, :$SD, :$vscale, :$debug) is export {
 
 sub text-line(
     # caller provides the $page to mark on
+    $text,
     :$page!,
+    :$x!, :$y!,
     :$gp!, # the GPaper object
+    :$font,
+    :$font-size = 12,
+    :$angle = 0,
     :$media = "Letter", # paper type
     :$check = False,
     :$debug,
     ) is export {
     check-inputs(:$page, :$gp) if $check;
+
+    $page.graphics: {
+        .transform: :translate($x, $y);
+        if $angle {
+            .transform: :rotate($angle);
+        }
+        .font = $font, $font-size;
+        .print: $text; 
+    }
 }
 
 sub create-graph-paper(
@@ -197,7 +211,14 @@ sub create-graph-paper(
     # if $vscale is True, draw just the vertical scale with
     # left margin as desired
     if $vscale {
-        ; # ok for now
+        # $SD must be defined
+        unless $SD.defined {
+            note qq:to/HERE/;
+            FATAL: Unable to use \$vscale unless \$SD is defined.
+                   Exiting...
+            HERE
+            exit(1)
+        }
     }
 
     #========================
@@ -208,6 +229,7 @@ sub create-graph-paper(
     if $SD.defined {
         create-scales :$page, :$gp, :$GD, :$SD, :$LLX, :$LLY, :$debug;
     }
+ 
     return if $vscale;
 
     #==============
@@ -239,8 +261,7 @@ sub create-grid(
         # for left side numbers and tick marks
         # for right side numbers and tick marks
 
-    $page.gfx: {
-        .Save;
+    $page.graphics: {
         .transform: :translate($LLX, $LLY);
 
         # draw horizontal lines, $y is varying 0 to $twidth
@@ -289,7 +310,6 @@ sub create-grid(
         }
 
         say "DEBUG: Grid LineWidth = {$gp.cell-linewidth}" if $debug;
-        .Restore;
     }
 } # end of sub create-grid
 
@@ -320,8 +340,7 @@ sub create-scales(
     # use subs without the $gp, $GD, or $SD objects
 
 
-    $page.gfx: {
-        .Save;
+    $page.graphics: {
         # always start at the bottom left
         .transform: :translate($LLX, $LLY);
 
@@ -331,12 +350,12 @@ sub create-scales(
 
         if $vscale {
             create-left-scale :$page, :$debug, :$vscale,
-            :$gp, $GD, $SD, :$font, :$font-size;
+            :$gp, :$GD, $SD, :$font, :$font-size;
             # then quit
         }
         else {
             create-left-scale :$page, :$debug,
-            :$gp, $GD, $SD, :$font, :$font-size;
+            :$gp, :$GD, $SD, :$font, :$font-size;
         }
 
         =begin comment
@@ -380,7 +399,6 @@ sub create-scales(
             .Stroke;
         }
         =end comment
-        .Restore;
     }
 } # end of sub create-scales
 
@@ -547,8 +565,7 @@ sub create-left-scale(
            height = $height
     HERE
 
-    $page.gfx: {
-        .Save;
+    $page.graphics: {
         .transform: :translate($llx, $lly);
         # VERTICAL line
         .LineWidth = 0.7; # ?$gp.cell-linewidth;
@@ -556,7 +573,6 @@ sub create-left-scale(
         .LineTo: 0, $height; ## page height$ury, $GD.graph-height;
         .Stroke;
 
-        =begin comment
         # tick marks and numbers
         .MoveTo: 0, 0;
         my $y = 0;
@@ -564,7 +580,7 @@ sub create-left-scale(
         my $tick-angle = 0; # degrees
         my $tnum = 0;
         my ($width, $length);
-        my $scale-number = 0; # for the scale markings
+        my $scale-number = 0; # for the scale number markings
         my $put-scale-number = True; # first pass
         while $y <= $height {
             ++$tnum; # 1..10
@@ -596,7 +612,7 @@ sub create-left-scale(
             if $put-scale-number {
                 my $delta-x = 2 + $tic-length10;
                 # in this module...
-                print-scale-number :$page, :x($delta-x), :$y, :$font,
+                print-scale-number $scale-number, :$page, :x($delta-x), :$y, :$font,
                                            :$font-size; # add angle and color
                 $put-scale-number = False;
             }
@@ -608,11 +624,8 @@ sub create-left-scale(
                 $tnum = 0;
             }
         }
-        =end comment
-        .Restore;
     }
 
-    =begin comment
     #   left to right
     for 0..$GD.ncells-x -> $i {
         my $x = $i * $gp.cell-size-x;
@@ -633,7 +646,6 @@ sub create-left-scale(
         .LineTo: $x, $GD.graph-height;
         .Stroke;
     }
-    =end comment
 
 } # end of sub create-left-scale
 
@@ -660,6 +672,7 @@ sub create-bottom-scale(
 # print-scale-number :$page, :x($delta-x), :$y, :$font,
 #                    :$font-size; # add angle and color
 sub print-scale-number(
+    $number,
     :$page!,
     :$x!,
     :$y!,
@@ -671,11 +684,10 @@ sub print-scale-number(
     :$debug,
 ) is export {
 
-    $page.gfx: -> {
-        .Save;
-        .transfosm
+    $page.graphics: {
         .transform: :translate($x, $y);
-        .Restore;
+        .font = $font, $font-size;
+        .print: $number, :$align, :$valign; 
     }
 
 } # end of sub print-scale-number

@@ -1,5 +1,7 @@
 use Test;
 
+my $debug = 1;
+
 use PDF::GraphPaper;
 use PDF::GraphPaper::Subs;
 use PDF::GraphPaper::Vars;
@@ -23,7 +25,7 @@ lives-ok {
 }, "default graph paper";
 
 lives-ok {
-    $ofil = "test2.pdf";
+    $ofil = "test8.pdf";
     my $gp = GPaper.new;
    
     $gp.major-grids = 0;
@@ -62,4 +64,4 @@ scale-l             0
 scale-r             0
 grid-origin-x       0
 grid-origin-y       0
-1..1
+:1..1
