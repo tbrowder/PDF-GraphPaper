@@ -53,18 +53,16 @@ sub create-left-scale(
            height = $height
     HERE
 
-    my $g = $page.gfx;
-    $g.Save;
+    $page.graphics: {
 
-    $g.transform: :translate($llx, $lly);
+    .transform: :translate($llx, $lly);
     # VERTICAL line
-    $g.LineWidth = 0.7; # ?$gp.cell-linewidth;
-    $g.MoveTo: 0, 0;
-    $g.LineTo: 0, $height; ## page height$ury, $GD.graph-height;
-    $g.Stroke;
+    .LineWidth = 0.7; # ?$gp.cell-linewidth;
+    .MoveTo: 0, 0;
+    .LineTo: 0, $height; ## page height$ury, $GD.graph-height;
+    .Stroke;
 
     # tick marks and numbers
-    $g.MoveTo: 0, 0;
     my $y = 0;
     my $inc = 0.1 * $units;
     my $tick-angle = 0; # degrees
@@ -95,7 +93,6 @@ sub create-left-scale(
             $length    = $tic-length0;
         }
 
-        # in Subs
         draw-line :$page, :angle($tick-angle), :x($llx), :$y,
                           :$linewidth, :$length;
 
@@ -120,7 +117,7 @@ sub create-left-scale(
             $tnum = 0;
         }
     }
-    $g.Restore;
+    } # end of $page.graphics
 }
 
 # print-scale-number :$page, :x($delta-x), :$y, :$font,
