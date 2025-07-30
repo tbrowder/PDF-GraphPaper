@@ -7,11 +7,6 @@ use PDF::Font::Loader :load-font;
 use PDF::Content;
 
 use QueryOS;
-use PDF::Font::Loader::HarfBuzz;
-use PDF::Font::Loader :load-font;
-use PDF::Content;
-
-use QueryOS;
 
 my $os = OS.new;
 
