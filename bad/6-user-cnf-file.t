@@ -1,6 +1,7 @@
 use Test;
 
 my $debug = 1;
+my $ofil = "test0.pdf";
 
 use PDF::API6;
 use PDF::Lite;
@@ -43,7 +44,6 @@ lives-ok {
 }, "test sub create-graph-paper with vscale";
 
 if $debug {
-    my $ofil = "test0.pdf";
     $pdf.save-as: $ofil;
     say "DEBUG: See output file '$ofil";
 }

@@ -34,6 +34,8 @@ if $debug {
 
 done-testing;
 
+=finish
+
 sub print-text(
     $text,
     :$page!,

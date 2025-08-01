@@ -1,8 +1,8 @@
 use Test;
 
 my $debug = 1;
+my $ofil = "test3.pdf";
 
-use PDF::API6;
 use PDF::Lite;
 use PDF::Content::Color :ColorName, :color;
 use PDF::Content::XObject;
@@ -42,7 +42,6 @@ lives-ok {
 }, "test sub create-scales";
 
 if $debug {
-   my $ofil = "test3.pdf";
    $pdf.save-as: $ofil; 
    say "DEBUG: See output file '$ofil'";
 }

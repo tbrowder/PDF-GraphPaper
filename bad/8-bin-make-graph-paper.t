@@ -1,13 +1,14 @@
 use Test;
 
 my $debug = 1;
+my $ofil = "test.pdf";
 
 use PDF::GraphPaper;
 use PDF::GraphPaper::Subs;
 use PDF::GraphPaper::Vars;
 use PDF::GraphPaper::Classes;
 
-my ($ofil, $res);
+my ($res);
 lives-ok {
     show-paper-sizes
 }
@@ -18,7 +19,6 @@ lives-ok {
 is $res, '0 0 612 792';
 
 lives-ok {
-    $ofil = "test.pdf";
     #my $p = PDF::GraphPaper::GPaper.new;
     my $gp = GPaper.new;
     run "bin/make-graph-paper", $ofil, :debug(1);

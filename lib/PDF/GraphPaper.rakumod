@@ -14,7 +14,7 @@ use PDF::GraphPaper::Subs;
 use PDF::GraphPaper::Classes;
 use PDF::GraphPaper::FreeFonts;
 
-our %fonts = get-loaded-fonts-hash;
+my %fonts = get-loaded-fonts-hash;
 
 sub show-spec(
     :$debug,
@@ -78,7 +78,7 @@ sub text-line(
             .transform: :rotate($angle);
         }
         .font = $font, $font-size;
-        .print: $text; 
+        .print: $text;
     }
 }
 
@@ -229,7 +229,7 @@ sub create-graph-paper(
     if $SD.defined {
         create-scales :$page, :$gp, :$GD, :$SD, :$LLX, :$LLY, :$debug;
     }
- 
+
     return if $vscale;
 
     #==============
@@ -678,16 +678,39 @@ sub print-scale-number(
     :$y!,
     :$font!,
     :$font-size!, # add angle and color
-    :$align  where * ~~ /left|justify|center/, # it depends on which scale
+    :$align  where * ~~ /left|right|center/, # it depends on which scale
     :$valign where * ~~ /top|center|bottom/,
     :$angle = 0,
     :$debug,
 ) is export {
 
+    # the one from PDF::NameTags should work!
+    =begin comment
     $page.graphics: {
-        .transform: :translate($x, $y);
-        .font = $font, $font-size;
-        .print: $number, :$align, :$valign; 
+        # translate to top-middle
+        my $uly = $cy + 0.5 * $bh;
+        my $tx = $cx;
+        my $ty = $cy + ($height * 0.5) - $line2Y;
+
+        # TWEAK down
+        $ty -= 5;
+        .transform: :translate($tx, $ty); # where $x/$y is the desired reference point
+        #.text-transform: :translate($tx, $ty);
+        .FillColor = color $tcolor; #Black; #rgb(0, 0, 0); # color Black
+        .font = %fonts<hb>, #.core-font('HelveticaBold'),
+                 $line2size; # the size
+        .print: $first, :align<center>, :valign<center>;
+    }
+    =end comment
+
+    $page.graphics: {
+        # translate to x, y
+        my $tx = $x;
+        my $ty = $y;
+        .transform: :translate($tx, $ty); # where $x/$y is the desired reference point
+        .font = $font,      #.core-font('HelveticaBold'),
+                $font-size; # the size
+        .print: $number, :align($align), :valign($valign);
     }
 
 } # end of sub print-scale-number
