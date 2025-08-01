@@ -15,6 +15,7 @@ use LScale;
 use LScale::FreeFonts;
 
 my PDF::Lite $pdf .= new;
+my PDF::API6 $pdf .= new;
 my $page = $pdf.add-page;
 isa-ok $page, PDF::Content::Page;
 

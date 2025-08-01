@@ -4,10 +4,11 @@ use MacOS::NativeLib "*";
 use PDF::API6;
 use PDF::Lite;
 use PDF::Content::Color :ColorName, :color;
-use PDF::Content::XObject;
-use PDF::Tags;
-use PDF::Content::Text::Box;
-use PDF::Content::Page :PageSizes;
+#use PDF::Content::XObject;
+#use PDF::Tags;
+#use PDF::Content::Text::Box;
+#use PDF::Content::Page :PageSizes;
+use PDF::Content::Ops :TextMode;
 
 use LScale::FreeFonts;
 
@@ -20,6 +21,8 @@ sub create-left-scale(
     :$page!,
     :$llx = 36,
     :$lly =  0,
+    :$font,
+    :$font-size,
 ) is export {
     # at llx, lly
     # create a vertical line
@@ -55,68 +58,77 @@ sub create-left-scale(
 
     $page.graphics: {
 
-    .transform: :translate($llx, $lly);
-    # VERTICAL line
-    .LineWidth = 0.7; # ?$gp.cell-linewidth;
-    .MoveTo: 0, 0;
-    .LineTo: 0, $height; ## page height$ury, $GD.graph-height;
-    .Stroke;
+        .transform: :translate($llx, $lly);
+        # VERTICAL line
+        .LineWidth = 0.7; # ?$gp.cell-linewidth;
+        .MoveTo: 0, 0;
+        .LineTo: 0, $height; ## page height$ury, $GD.graph-height;
+        .Stroke;
 
-    # tick marks and numbers
-    my $y = 0;
-    my $inc = 0.1 * $units;
-    my $tick-angle = 0; # degrees
-    my $tnum = 0;
-    my ($linewidth, $length);
-    my $scale-number = 0; # for the scale number markings
-    my $put-scale-number = True; # first pass
-    while $y <= $height {
-        ++$tnum; # 1..10
-        # make a tick mark every increment
-        # parameters depend on increment number
-        #   marks are from vertical centerline to desire mark length
-        # make a longer tick mark every 5th increment
-        # make an even longer tick mark every 10th increment
-        # print a scale number at zero and every 10th increment
-        if $tnum == 5 {
-            $linewidth = $tic-thick5;
-            $length    = $tic-length5;
-        }
-        elsif $tnum == 10 {
-            $linewidth = $tic-thick10;
-            $length    = $tic-length10;
-            ++$scale-number;
-            $put-scale-number = True;
-        }
-        else {
-            $linewidth = $tic-thick0;
-            $length    = $tic-length0;
-        }
-
-        draw-line :$page, :angle($tick-angle), :x($llx), :$y,
-                          :$linewidth, :$length;
-
-        =begin comment
-        if $put-scale-number {
-            my $delta-x = 2 + $tic-length10;
-            # in this module...
-            unless $scale-number.defined {
-                die "FATAL: Undefined";
+        # tick marks and numbers
+        my $y = 0;
+        my $inc = 0.1 * $units;
+        # degrees (pointing to the left of the scale line)
+        my $tick-angle = deg2rad(180); 
+        my $tnum = 0;
+        my ($linewidth, $length);
+        my $scale-number = 0; # for the scale number markings
+        my $put-scale-number = True; # first pass
+        while $y <= $height {
+            ++$tnum; # 1..10
+            # make a tick mark every increment
+            # parameters depend on increment number
+            #   marks are from vertical centerline to desire mark length
+            # make a longer tick mark every 5th increment
+            # make an even longer tick mark every 10th increment
+            # print a scale number at zero and every 10th increment
+            if $tnum == 5 {
+                $linewidth = $tic-thick5;
+                $length    = $tic-length5;
             }
-            print-scale-number :text("$scale-number"), :$page, :x($delta-x), 
-                               :$y, :$font, :$font-size,
-                               ; # add angle and color
-            $put-scale-number = False;
-        }
-        =end comment
+            elsif $tnum == 10 {
+                $linewidth = $tic-thick10;
+                $length    = $tic-length10;
+                ++$scale-number;
+                $put-scale-number = True;
+            }
+            else {
+                $linewidth = $tic-thick0;
+                $length    = $tic-length0;
+            }
 
-        # increment by 0.1 of the scale units
-        $y += $inc;
-        # reset increment counter if need be
-        if $tnum == 10 {
-            $tnum = 0;
+            draw-line :$page, :angle($tick-angle), :x(0), :$y,
+             :$linewidth, :$length;
+
+#           =begin comment
+            if $put-scale-number {
+                my $delta-x = 2 + $tic-length10;
+                # in this module...
+                unless $scale-number.defined {
+                    die "FATAL: Undefined";
+                }
+
+                .text: {
+                    .font = $font, $font-size;
+                    .text-position = $delta-x, $y;
+                    .print: $scale-number, :align<center>, :valign<center>;
+                }
+
+#               print-scale-number :text("$scale-number"), :$page, :x($delta-x),
+#               :$y, :$font, :$font-size,
+#               ; # add angle and color
+#               }
+                $put-scale-number = False;
+            }
+#           =end comment
+
+            # increment by 0.1 of the scale units
+            $y += $inc;
+            # reset increment counter if need be
+            if $tnum == 10 {
+                $tnum = 0;
+            }
         }
-    }
     } # end of $page.graphics
 }
 
@@ -130,23 +142,18 @@ Str :$text!,
     :$y!,
     :$font!,
     :$font-size!, # add angle and color
-    :$align!,
+    :$align,
     :$valign is copy,
     :$baseline = $valign // "alphabetic",
     :$angle = 0,
     :$debug,
 ) is export {
 
-    $page.text: {
+    $page.text: -> $txt {
         # translate to x, y
-        .text-transform: :translate($x, $y); 
-        .font = $font, $font-size;
-        if $valign {
-       	    .print: :$text, :$align, :$valign, :$baseline;
-        }
-        else {
-       	    .print: :$text, :$align, :$baseline;
-        }
+        $txt.font = $font, $font-size;
+	$txt.text-position = 200, 200;
+       	$txt.say: :$text, :$align, :$valign, :$baseline;
     }
 
 } # end of sub print-scale-number
@@ -168,7 +175,7 @@ sub draw-line(
     # The line's angle reference is horizontal at zero, positive increasing
     #   counter-clockwise
     $page.graphics: {
-        #.Save;
+        .Save;
         .transform: :translate($x, $y);
         if $angle {
             .transform: :rotate($angle);
@@ -179,6 +186,10 @@ sub draw-line(
         .MoveTo: 0,       0;
         .LineTo: $length, 0;
         .Stroke;
-        #.Restore;
+        .Restore;
     }
 } # draw-line
+
+sub deg2rad($degrees) is export {
+    $degrees * pi / 180
+}
