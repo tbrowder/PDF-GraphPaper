@@ -5,6 +5,7 @@ use MacOS::NativeLib "*";
 use PDF::Font::Loader::HarfBuzz;
 use PDF::Font::Loader :load-font;
 use PDF::Content;
+use PDF::Content::FontObj;
 
 use QueryOS;
 
@@ -47,7 +48,7 @@ sub get-loaded-fonts-hash(:$debug --> Hash) is export {
     my $ffcbo = "$fontdir/FreeMonoBoldOblique.otf";
 
     my %fonts;
-    %fonts<t>   = load-font :file($fft); # deb 12, :subset;
+    PDF::Content::FontObj %fonts<t>   = load-font :file($fft); # deb 12, :subset;
     %fonts<tb>  = load-font :file($fftb); # deb 12, :subset;
     %fonts<ti>  = load-font :file($ffti); # deb 12, :subset;
     %fonts<tbi> = load-font :file($fftbi); # deb 12, :subset;

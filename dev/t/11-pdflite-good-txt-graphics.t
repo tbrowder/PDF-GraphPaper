@@ -1,5 +1,6 @@
 use Test;
 
+# DO NOT USE OTHER THAN CORE FONTS FOR NOW
 my $debug = 1;
 my $ofil = "test11.pdf";
 

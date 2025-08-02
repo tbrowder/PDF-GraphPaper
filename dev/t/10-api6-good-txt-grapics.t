@@ -1,5 +1,6 @@
 use Test;
 
+# DO NOT USE OTHER THAN CORE FONTS FOR NOW
 my $debug = 1;
 my $ofil = "test10.pdf";
 
@@ -22,7 +23,7 @@ my $font = $pdf.core-font(:family<Times-Roman>);
 
 my $text = "Some text";
 lives-ok {
-    mixed $text, :$font;
+    mixed $text, :$page, :$font;
 }
 
 done-testing;
@@ -33,7 +34,8 @@ if $debug {
 }
 
 sub mixed(
-    $text,
+Str $text,
+    :$page!,
     :$llx = 0,
     :$lly = 0,
     :$font!,
