@@ -5,20 +5,13 @@ use MacOS::NativeLib "*";
 #use PDF::API6;
 use PDF::Lite;
 
+use PDF::Content;
 use PDF::Content::Color :ColorName, :color;
-
-#use PDF::Content::XObject;
-#use PDF::Tags;
-#use PDF::Content::Text::Box;
-#use PDF::Content::Page :PageSizes;
-#use PDF::Content::Ops :TextMode;
-
-use FreeFonts;
-
-my %fonts = get-loaded-fonts-hash;
-
-my $font = %fonts<t>;
-my $font-size = 12;
+use PDF::Content::XObject;
+use PDF::Tags;
+use PDF::Content::Text::Box;
+use PDF::Content::Page :PageSizes;
+use PDF::Content::Ops :TextMode;
 
 sub create-left-scale(
     :$page!,
@@ -116,7 +109,7 @@ sub create-left-scale(
                 .text: {
                     .font = $font, $font-size;
                     .text-position = $delta-x, $y;
-                    .print: $scale-number, :align<center>, :valign<center>;
+                    .print: "$scale-number", :align<center>, :valign<center>;
                 }
 
 #               print-scale-number :text("$scale-number"), :$page, :x($delta-x),

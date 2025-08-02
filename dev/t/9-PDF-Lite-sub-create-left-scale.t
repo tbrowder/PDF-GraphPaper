@@ -30,12 +30,13 @@ my $page = $pdf.add-page;
 isa-ok $page, PDF::Lite::Page;
 #=end comment
 
-=finish
+my $font = $pdf.core-font(:family<Times-Roman>);
+my $font-size = 12;
 
 my $llx = 36;
 my $lly =  0;
 lives-ok {
-    create-left-scale :$page, :$llx, :$lly;
+    create-left-scale :$page, :$llx, :$lly, :$font, :$font-size;
 }, "create-left-scale";
 
 if $debug {

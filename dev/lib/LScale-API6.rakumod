@@ -13,10 +13,8 @@ use PDF::Content::Text::Box;
 use PDF::Content::Page :PageSizes;
 use PDF::Content::Ops :TextMode;
 use PDF::Content::FontObj;
-use FreeFonts;
 
 sub create-left-scale(
-#PDF::Content::Page :$page!,
     :$page!,
     :$llx = 36,
     :$lly =  0,
