@@ -1,6 +1,7 @@
 use Test;
 
 my $debug = 1;
+my $ofil = "test07.pdf";
 
 # use required libs
 use MacOS::NativeLib "*";
@@ -28,10 +29,8 @@ lives-ok {
 }, "draw-line";
 
 if $debug {
-    my $ofil = "test7.pdf";
     $pdf.save-as: $ofil;
     say "DEBUG: See output file '$ofil'";
 }
 
 done-testing;
-
