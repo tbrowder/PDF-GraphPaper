@@ -1,4 +1,4 @@
-unit module LScale::FreeFonts;
+unit module FreeFonts;
 
 use MacOS::NativeLib "*";
 

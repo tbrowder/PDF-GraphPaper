@@ -1,16 +1,19 @@
-unit module LScale;
+unit module LScale-PDF-Lite;
 
 use MacOS::NativeLib "*";
-use PDF::API6;
+
+#use PDF::API6;
 use PDF::Lite;
+
 use PDF::Content::Color :ColorName, :color;
+
 #use PDF::Content::XObject;
 #use PDF::Tags;
 #use PDF::Content::Text::Box;
 #use PDF::Content::Page :PageSizes;
-use PDF::Content::Ops :TextMode;
+#use PDF::Content::Ops :TextMode;
 
-use LScale::FreeFonts;
+use FreeFonts;
 
 my %fonts = get-loaded-fonts-hash;
 
@@ -63,13 +66,13 @@ sub create-left-scale(
         .LineWidth = 0.7; # ?$gp.cell-linewidth;
         .MoveTo: 0, 0;
         .LineTo: 0, $height; ## page height$ury, $GD.graph-height;
-        .Stroke;
+        .CloseStroke;
 
         # tick marks and numbers
         my $y = 0;
         my $inc = 0.1 * $units;
         # degrees (pointing to the left of the scale line)
-        my $tick-angle = deg2rad(180); 
+        my $tick-angle = deg2rad(180);
         my $tnum = 0;
         my ($linewidth, $length);
         my $scale-number = 0; # for the scale number markings
@@ -97,8 +100,10 @@ sub create-left-scale(
                 $length    = $tic-length0;
             }
 
+            =begin comment
             draw-line :$page, :angle($tick-angle), :x(0), :$y,
              :$linewidth, :$length;
+            =end comment
 
 #           =begin comment
             if $put-scale-number {

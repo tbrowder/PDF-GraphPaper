@@ -4,12 +4,13 @@ my $debug = 1;
 
 # use required libs
 use MacOS::NativeLib "*";
-use PDF::API6;
+#use PDF::API6;
 use PDF::Lite;
-use PDF::Content::Color :ColorName, :color;
-use PDF::Content::XObject;
-use PDF::Tags;
-use PDF::Content::Text::Box;
+
+#use PDF::Content::Color :ColorName, :color;
+#use PDF::Content::XObject;
+#use PDF::Tags;
+#use PDF::Content::Text::Box;
 
 use LScale;
 
@@ -20,10 +21,10 @@ isa-ok $page, PDF::Lite::Page;
 my ($x, $y) = 300, 300;
 my $angle   = 45;
 my $length  = 144;
-my $width   = 0.75;
+my $linewidth   = 0.75;
 
 lives-ok {
-    draw-line :$x, :$y, :$length, :$width, :$angle, :$page;
+    draw-line :$x, :$y, :$length, :$linewidth, :$angle, :$page;
 }, "draw-line";
 
 if $debug {
