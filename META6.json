@@ -8,7 +8,6 @@
   ],
   "depends": [
     "MacOS::NativeLib",
-    "PDF::API6",
     "PDF::Lite",
     "PDF::Content",
     "PDF::Content::Color :ColorName, :color",

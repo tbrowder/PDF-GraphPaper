@@ -67,7 +67,7 @@ sub create-left-scale(
         my $inc = 0.1 * $units;
         # degrees (pointing to the left of the scale line)
         my $tick-angle = deg2rad(180);
-        my $tnum = 0;
+        my $tnum = -1;
         my ($linewidth, $length);
         my $scale-number = 0; # for the scale number markings
         my $put-scale-number = True; # first pass
@@ -94,10 +94,10 @@ sub create-left-scale(
                 $length    = $tic-length0;
             }
 
-            =begin comment
+            #=begin comment
             draw-line :$page, :angle($tick-angle), :x(0), :$y,
              :$linewidth, :$length;
-            =end comment
+            #=end comment
 
 #           =begin comment
             if $put-scale-number {
@@ -109,8 +109,8 @@ sub create-left-scale(
 
                 .text: {
                     .font = $font, $font-size;
-                    .text-position = $delta-x, $y;
-                    .print: "$scale-number", :align<center>, :valign<center>;
+                    .text-position = -$delta-x, $y;
+                    .print: "$scale-number", :align<right>, :valign<center>;
                 }
 
 #               print-scale-number :text("$scale-number"), :$page, :x($delta-x),
@@ -134,33 +134,6 @@ sub create-left-scale(
 sub deg2rad($degrees) is export {
     $degrees * pi / 180
 }
-
-=finish
-# print-scale-number :$page, :x($delta-x), :$y, :$font,
-#                    :$font-size; # add angle and color
-# print-scale-number :$x, :$y, :$length, :$width, :$angle, :$page;
-sub print-scale-number(
-Str :$text!,
-    :$page!,
-    :$x!,
-    :$y!,
-    :$font!,
-    :$font-size!, # add angle and color
-    :$align,
-    :$valign is copy,
-    :$baseline = $valign // "alphabetic",
-    :$angle = 0,
-    :$debug,
-) is export {
-
-    $page.text: -> $txt {
-        # translate to x, y
-        $txt.font = $font, $font-size;
-	$txt.text-position = 200, 200;
-       	$txt.say: :$text, :$align, :$valign, :$baseline;
-    }
-
-} # end of sub print-scale-number
 
 # draw-line :$page, :angle(), :x(), y(), :length(), :width();
 # draw-line :$x, :$y, :$length, :$linewidth, :$angle, :$page;
@@ -193,3 +166,30 @@ sub draw-line(
         .Restore;
     }
 } # draw-line
+
+=finish
+# print-scale-number :$page, :x($delta-x), :$y, :$font,
+#                    :$font-size; # add angle and color
+# print-scale-number :$x, :$y, :$length, :$width, :$angle, :$page;
+sub print-scale-number(
+Str :$text!,
+    :$page!,
+    :$x!,
+    :$y!,
+    :$font!,
+    :$font-size!, # add angle and color
+    :$align,
+    :$valign is copy,
+    :$baseline = $valign // "alphabetic",
+    :$angle = 0,
+    :$debug,
+) is export {
+
+    $page.text: -> $txt {
+        # translate to x, y
+        $txt.font = $font, $font-size;
+	$txt.text-position = 200, 200;
+       	$txt.say: :$text, :$align, :$valign, :$baseline;
+    }
+
+} # end of sub print-scale-number

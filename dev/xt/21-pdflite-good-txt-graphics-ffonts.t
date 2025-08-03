@@ -2,28 +2,32 @@ use Test;
 
 # DO NOT USE OTHER THAN CORE FONTS FOR NOW
 my $debug = 1;
-my $ofil = "test20.pdf";
+my $ofil = "test21.pdf";
 
 # use required libs
 use MacOS::NativeLib "*";
-use PDF::API6;
+#use PDF::API6;
+use PDF::Lite;
 
 #use PDF::Content::Color :ColorName, :color;
 #use PDF::Tags;
 #use PDF::Content::Text::Box;
 #use PDF::Content::Ops :TextMode;
 
-my PDF::API6 $pdf .= new;
+my PDF::Lite $pdf .= new;
 my $page = $pdf.add-page;
-isa-ok $page, PDF::Content::Page;
+isa-ok $page, PDF::Lite::Page;
 
 sub mixed{...}
 
-my $font = $pdf.core-font(:family<Times-Roman>);
+use FreeFonts;
+my %fonts = get-loaded-fonts-hash;
+my $font = %fonts<t>;
+#my $font = $pdf.core-font(:family<Times-Roman>);
 
 my $text = "Some text";
 lives-ok {
-    mixed $text, :$page, :$font;
+    mixed $text, :$font;
 }
 
 done-testing;
@@ -34,8 +38,7 @@ if $debug {
 }
 
 sub mixed(
-Str $text,
-    :$page!,
+    $text,
     :$llx = 0,
     :$lly = 0,
     :$font!,

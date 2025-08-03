@@ -31,7 +31,10 @@ my $page = $pdf.add-page;
 isa-ok $page, PDF::Lite::Page;
 =end comment
 
-my $font = $pdf.core-font(:family<Times-Roman>);
+use FreeFonts;
+my %fonts = get-loaded-fonts-hash;
+my $font = %fonts<t>;
+#my $font = $pdf.core-font(:family<Times-Roman>);
 my $font-size = 12;
 
 my $llx = 36;
